@@ -1,0 +1,1162 @@
+<title>ملخص CCNA — Introduction to Networks</title>
+<style>
+  :root{
+    --bg:#f3f6f6;
+    --surface:#ffffff;
+    --surface-2:#eaf0f0;
+    --ink:#0f1a1d;
+    --muted:#57696d;
+    --rule:#d7e0e1;
+    --accent:#0f6f80;
+    --accent-soft:#e2f0f2;
+    --copper:#96581f;
+    --copper-soft:#f6ece2;
+    --up:#2b7a4b;
+    --warn:#8f6a06;
+    --down:#a63a2a;
+    --code-bg:#0e1b1f;
+    --code-ink:#d6e6e8;
+    --code-dim:#7f9aa0;
+    --shadow:0 1px 2px rgba(15,26,29,.05), 0 8px 24px -16px rgba(15,26,29,.28);
+
+    --mono:ui-monospace,"SFMono-Regular","JetBrains Mono","Cascadia Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Arabic","Dubai","Tahoma",sans-serif;
+
+    --measure:74ch;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#0c1315;
+      --surface:#111d20;
+      --surface-2:#16252a;
+      --ink:#e3ecec;
+      --muted:#8da2a6;
+      --rule:#213036;
+      --accent:#57c6d8;
+      --accent-soft:#0f2a30;
+      --copper:#dc9d61;
+      --copper-soft:#2a1e13;
+      --up:#63c48b;
+      --warn:#d6b44c;
+      --down:#e78570;
+      --code-bg:#081013;
+      --code-ink:#cfe2e4;
+      --code-dim:#6f8b91;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0c1315;
+    --surface:#111d20;
+    --surface-2:#16252a;
+    --ink:#e3ecec;
+    --muted:#8da2a6;
+    --rule:#213036;
+    --accent:#57c6d8;
+    --accent-soft:#0f2a30;
+    --copper:#dc9d61;
+    --copper-soft:#2a1e13;
+    --up:#63c48b;
+    --warn:#d6b44c;
+    --down:#e78570;
+    --code-bg:#081013;
+    --code-ink:#cfe2e4;
+    --code-dim:#6f8b91;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.9);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.75;
+    direction:rtl;
+    text-align:right;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{max-width:1200px;margin:0 auto;padding:0 20px 96px}
+
+  /* ---------- masthead ---------- */
+  .masthead{
+    border-bottom:1px solid var(--rule);
+    padding:56px 0 30px;
+    margin-bottom:36px;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--accent);
+    direction:ltr;
+    text-align:right;
+    margin:0 0 16px;
+  }
+  h1{
+    font-family:var(--mono);
+    font-weight:600;
+    font-size:clamp(26px,4.2vw,42px);
+    line-height:1.18;
+    letter-spacing:-.01em;
+    margin:0 0 14px;
+    text-wrap:balance;
+  }
+  .lede{
+    color:var(--muted);
+    max-width:var(--measure);
+    margin:0;
+    font-size:16.5px;
+  }
+  .meta-row{
+    display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;
+  }
+  .tag{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;
+    padding:4px 10px;border:1px solid var(--rule);border-radius:2px;
+    color:var(--muted);direction:ltr;
+  }
+
+  /* ---------- layout ---------- */
+  .layout{display:grid;grid-template-columns:minmax(0,1fr);gap:48px}
+  @media (min-width:1000px){
+    .layout{grid-template-columns:238px minmax(0,1fr);align-items:start}
+  }
+  .rail{position:sticky;top:24px;align-self:start}
+  @media (max-width:999px){
+    .rail{position:static;border:1px solid var(--rule);border-radius:3px;padding:18px;background:var(--surface)}
+  }
+  .rail h2{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 14px;direction:ltr;text-align:right;font-weight:600;
+  }
+  .rail ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+  .rail a{
+    display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:baseline;
+    text-decoration:none;color:var(--ink);font-size:13.5px;line-height:1.45;
+    padding:7px 8px;border-radius:3px;border-right:2px solid transparent;
+  }
+  .rail a:hover{background:var(--surface-2);border-right-color:var(--accent)}
+  .rail a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .rail .n{font-family:var(--mono);font-size:11px;color:var(--accent);direction:ltr}
+
+  /* ---------- sections ---------- */
+  section{scroll-margin-top:20px}
+  section + section{margin-top:64px}
+  .sec-head{
+    display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;
+    padding-bottom:16px;border-bottom:2px solid var(--ink);margin-bottom:26px;
+  }
+  .sec-num{
+    font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent);
+    direction:ltr;padding-top:5px;
+  }
+  .sec-title-en{
+    font-family:var(--mono);font-size:clamp(15px,2.2vw,19px);font-weight:600;
+    line-height:1.35;margin:0;direction:ltr;text-align:left;text-wrap:balance;
+  }
+  .sec-title-ar{margin:6px 0 0;color:var(--muted);font-size:14.5px}
+
+  h3{
+    font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--copper);margin:38px 0 12px;font-weight:600;
+    display:flex;align-items:center;gap:10px;
+  }
+  h3::after{content:"";flex:1;height:1px;background:var(--rule)}
+  h4{font-size:15px;margin:24px 0 8px;font-weight:600}
+
+  p{max-width:var(--measure);margin:0 0 12px}
+  ul{margin:0 0 14px;padding-inline-start:20px;max-width:var(--measure)}
+  li{margin-bottom:6px}
+  li::marker{color:var(--accent)}
+  strong{font-weight:600}
+  .en{font-family:var(--mono);font-size:.9em;direction:ltr;unicode-bidi:isolate;color:var(--accent)}
+  .term{font-family:var(--mono);font-size:.88em;direction:ltr;unicode-bidi:isolate}
+
+  /* ---------- code ---------- */
+  pre{
+    background:var(--code-bg);color:var(--code-ink);
+    font-family:var(--mono);font-size:13px;line-height:1.65;
+    direction:ltr;text-align:left;unicode-bidi:isolate;
+    padding:16px 18px;border-radius:3px;overflow-x:auto;
+    margin:0 0 16px;border:1px solid var(--rule);
+    tab-size:2;
+  }
+  pre .c{color:var(--code-dim)}
+  pre .p{color:var(--copper)}
+  code{font-family:var(--mono);font-size:.88em;direction:ltr;unicode-bidi:isolate;
+    background:var(--surface-2);padding:1px 5px;border-radius:2px}
+
+  .cmd-block{margin:0 0 18px}
+  .cmd-label{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 6px;direction:ltr;text-align:left;
+  }
+
+  /* ---------- tables ---------- */
+  .t-scroll{overflow-x:auto;margin:0 0 18px;border:1px solid var(--rule);border-radius:3px;background:var(--surface)}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:480px}
+  th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--muted);font-weight:600;background:var(--surface-2);white-space:nowrap;
+  }
+  tr:last-child td{border-bottom:none}
+  td.mono,th.mono{font-family:var(--mono);direction:ltr;text-align:left;font-size:12.5px;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+  /* ---------- callouts ---------- */
+  .note{
+    background:var(--accent-soft);border:1px solid var(--rule);
+    border-right:3px solid var(--accent);
+    padding:14px 16px;border-radius:3px;margin:0 0 18px;max-width:var(--measure);
+  }
+  .note p:last-child{margin-bottom:0}
+  .note-t{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 6px;direction:ltr;text-align:right}
+  .warnbox{background:var(--copper-soft);border-right-color:var(--copper)}
+  .warnbox .note-t{color:var(--copper)}
+
+  .pill{font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:2px;direction:ltr;display:inline-block;white-space:nowrap}
+  .pill-up{background:var(--up);color:#fff}
+  .pill-warn{background:var(--warn);color:#fff}
+  .pill-down{background:var(--down);color:#fff}
+
+  .grid2{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+  @media (min-width:760px){.grid2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .card{background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:16px 18px;box-shadow:var(--shadow)}
+  .card h4{margin-top:0}
+  .card ul{margin-bottom:0}
+
+  footer{margin-top:72px;padding-top:24px;border-top:1px solid var(--rule);color:var(--muted);font-size:13px}
+  a{color:var(--accent)}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">CCNA v7 · Introduction to Networks (ITN)</p>
+  <h1>ملخص شامل — النظري + كل الـ Commands</h1>
+  <p class="lede">
+    الملخص ده مبني على الـ course objectives السبعة بتاعة مادة <span class="term">Introduction to Networks</span>.
+    كل objective فيه جزء نظري مختصر وجزء أوامر عملية جاهزة للـ lab والامتحان.
+    الأوامر كلها بالـ Cisco IOS syntax.
+  </p>
+  <div class="meta-row">
+    <span class="tag">7 objectives</span>
+    <span class="tag">IOS commands</span>
+    <span class="tag">IPv4 + IPv6</span>
+    <span class="tag">Security + Troubleshooting</span>
+  </div>
+</header>
+
+<div class="layout">
+
+  <nav class="rail" aria-label="فهرس">
+    <h2>Objectives</h2>
+    <ol>
+      <li><a href="#s1"><span class="n">01</span><span>Switches &amp; End Devices</span></a></li>
+      <li><a href="#s2"><span class="n">02</span><span>Physical &amp; Data Link — Ethernet</span></a></li>
+      <li><a href="#s3"><span class="n">03</span><span>Routers &amp; End-to-End</span></a></li>
+      <li><a href="#s4"><span class="n">04</span><span>IPv4 &amp; IPv6 Addressing</span></a></li>
+      <li><a href="#s5"><span class="n">05</span><span>Upper OSI Layers</span></a></li>
+      <li><a href="#s6"><span class="n">06</span><span>Network Security</span></a></li>
+      <li><a href="#s7"><span class="n">07</span><span>Troubleshooting</span></a></li>
+      <li><a href="#ref"><span class="n">08</span><span>Quick Reference</span></a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+  <!-- ================= 1 ================= -->
+  <section id="s1">
+    <div class="sec-head">
+      <div class="sec-num">01</div>
+      <div>
+        <h2 class="sec-title-en">Configure switches and end devices to provide access to local and remote network resources</h2>
+        <p class="sec-title-ar">إعداد الـ switches والأجهزة الطرفية للوصول للموارد المحلية والبعيدة</p>
+      </div>
+    </div>
+
+    <h3>Networking Today — الأساسيات</h3>
+    <ul>
+      <li><strong>مكونات الشبكة:</strong> <span class="term">End devices</span> (PC, laptop, phone, printer, server) — المصدر أو الوجهة للرسالة، و<span class="term">Intermediary devices</span> (switch, router, firewall, wireless AP) — بتوصّل وتوجّه، و<span class="term">Network media</span> (copper, fiber, wireless).</li>
+      <li><strong>NIC</strong> = كارت الشبكة، <strong>Port/Interface</strong> = المدخل اللي بيتوصل فيه الكابل.</li>
+      <li><strong>Topology:</strong> <span class="term">Physical</span> = مكان الأجهزة والكابلات فعليًا، <span class="term">Logical</span> = الـ addressing scheme ومسار البيانات.</li>
+      <li><strong>أنواع الشبكات:</strong> SOHO, LAN, WAN, Internet, <span class="term">Intranet</span> (داخلي للموظفين), <span class="term">Extranet</span> (وصول محدود لشركاء/عملاء).</li>
+      <li><strong>طرق الاتصال بالإنترنت:</strong> منزلي → Cable, DSL, Cellular, Satellite, Dial-up. شركات → Dedicated Leased Line, Metro Ethernet, Business DSL (SDSL), Satellite.</li>
+    </ul>
+
+    <h4>خصائص الشبكة الموثوقة (4 characteristics)</h4>
+    <div class="t-scroll">
+      <table>
+        <thead><tr><th>الخاصية</th><th>المعنى</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">Fault Tolerance</td><td>مسارات بديلة (redundancy) عشان لو مسار وقع الشبكة تفضل شغالة — packet switching بيسمح بده.</td></tr>
+          <tr><td class="mono">Scalability</td><td>تقدر تكبّر الشبكة من غير ما تأثر على المستخدمين الحاليين.</td></tr>
+          <tr><td class="mono">QoS</td><td>ترتيب أولويات الترافيك (voice/video قبل الـ web) عن طريق queuing عند الازدحام.</td></tr>
+          <tr><td class="mono">Security</td><td>حماية الـ infrastructure + حماية المعلومات: <strong>C</strong>onfidentiality, <strong>I</strong>ntegrity, <strong>A</strong>vailability.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Trends الحديثة</h4>
+    <ul>
+      <li><span class="term">BYOD</span> — أي جهاز، أي مكان، أي محتوى.</li>
+      <li><span class="term">Online collaboration</span> و<span class="term">Video communication</span> (Webex, telepresence).</li>
+      <li><span class="term">Cloud computing</span> — أنواعه: <strong>Public</strong> (متاح للكل), <strong>Private</strong> (لمؤسسة واحدة), <strong>Hybrid</strong> (خليط), <strong>Community</strong> (لمجموعة ليها نفس المتطلبات مثل الرعاية الصحية).</li>
+      <li><span class="term">Powerline networking</span> — نقل البيانات على أسلاك الكهرباء، و<span class="term">Wireless ISP (WISP)</span> للمناطق الريفية.</li>
+      <li><strong>تهديدات:</strong> viruses/worms/trojans, spyware/adware, zero-day attacks, DoS, data interception, identity theft.</li>
+      <li><strong>مكونات الحماية للشبكة المنزلية:</strong> antivirus + firewall. <strong>للشبكات الكبيرة:</strong> dedicated firewall systems, ACLs, IPS, VPN.</li>
+    </ul>
+
+    <h3>Cisco IOS — الوصول وأنماط الأوامر</h3>
+    <ul>
+      <li><strong>طرق الوصول:</strong> <span class="term">Console</span> (out-of-band، شغال حتى لو الشبكة واقعة، لازم اتصال فيزيائي)، <span class="term">SSH</span> (in-band، مشفّر — الموصى به)، <span class="term">Telnet</span> (in-band، غير مشفّر — تجنّبه)، <span class="term">AUX</span> (عن طريق مودم).</li>
+      <li><strong>Terminal emulation:</strong> PuTTY, Tera Term, SecureCRT.</li>
+    </ul>
+
+    <div class="t-scroll">
+      <table>
+        <thead><tr><th>Mode</th><th class="mono">Prompt</th><th>الدخول</th></tr></thead>
+        <tbody>
+          <tr><td>User EXEC</td><td class="mono">Switch&gt;</td><td>افتراضي بعد الـ login — أوامر عرض محدودة</td></tr>
+          <tr><td>Privileged EXEC</td><td class="mono">Switch#</td><td><code>enable</code></td></tr>
+          <tr><td>Global Config</td><td class="mono">Switch(config)#</td><td><code>configure terminal</code></td></tr>
+          <tr><td>Line Config</td><td class="mono">Switch(config-line)#</td><td><code>line console 0</code> / <code>line vty 0 15</code></td></tr>
+          <tr><td>Interface Config</td><td class="mono">Switch(config-if)#</td><td><code>interface vlan 1</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      <p class="note-t">Help &amp; Shortcuts</p>
+      <p><code>?</code> عرض الأوامر المتاحة · <code>Tab</code> إكمال الأمر · <code>Ctrl+Z</code> رجوع للـ privileged · <code>Ctrl+C</code> إلغاء · <code>Ctrl+Shift+6</code> إيقاف عملية (ping/traceroute) · <code>Up Arrow</code> الأمر السابق · الاختصارات مسموحة طالما فريدة (<code>conf t</code>, <code>sh run</code>).</p>
+    </div>
+
+    <div class="cmd-block">
+      <p class="cmd-label">Basic switch configuration</p>
+<pre><span class="c">! 1) الدخول والتسمية</span>
+Switch&gt; <span class="p">enable</span>
+Switch# <span class="p">configure terminal</span>
+Switch(config)# <span class="p">hostname</span> S1
+
+<span class="c">! 2) تأمين الوصول</span>
+S1(config)# <span class="p">enable secret</span> class
+S1(config)# <span class="p">line console 0</span>
+S1(config-line)# <span class="p">password</span> cisco
+S1(config-line)# <span class="p">login</span>
+S1(config-line)# <span class="p">exec-timeout</span> 5 0
+S1(config-line)# <span class="p">logging synchronous</span>
+S1(config-line)# <span class="p">exit</span>
+S1(config)# <span class="p">line vty 0 15</span>
+S1(config-line)# <span class="p">password</span> cisco
+S1(config-line)# <span class="p">login</span>
+S1(config-line)# <span class="p">transport input ssh</span>
+S1(config-line)# <span class="p">exit</span>
+
+<span class="c">! 3) تشفير كل الباسوردات النصية + رسالة تحذير</span>
+S1(config)# <span class="p">service password-encryption</span>
+S1(config)# <span class="p">banner motd</span> #Authorized Access Only!#
+
+<span class="c">! 4) الحفظ</span>
+S1(config)# <span class="p">end</span>
+S1# <span class="p">copy running-config startup-config</span></pre>
+    </div>
+
+    <div class="cmd-block">
+      <p class="cmd-label">SVI — إعطاء الـ switch عنوان IP للإدارة</p>
+<pre>S1(config)# <span class="p">interface vlan 1</span>
+S1(config-if)# <span class="p">ip address</span> 192.168.1.20 255.255.255.0
+S1(config-if)# <span class="p">ipv6 address</span> 2001:db8:acad:1::20/64
+S1(config-if)# <span class="p">no shutdown</span>
+S1(config-if)# <span class="p">exit</span>
+S1(config)# <span class="p">ip default-gateway</span> 192.168.1.1   <span class="c">! ضروري للوصول من شبكة تانية</span></pre>
+    </div>
+
+    <div class="cmd-block">
+      <p class="cmd-label">تفعيل SSH على switch أو router</p>
+<pre>S1(config)# <span class="p">ip domain-name</span> cisco.com
+S1(config)# <span class="p">username</span> admin <span class="p">secret</span> Str0ngP@ss
+S1(config)# <span class="p">crypto key generate rsa</span> modulus 1024
+S1(config)# <span class="p">ip ssh version</span> 2
+S1(config)# <span class="p">line vty 0 15</span>
+S1(config-line)# <span class="p">transport input ssh</span>
+S1(config-line)# <span class="p">login local</span>
+
+<span class="c">! التحقق والاتصال من جهاز تاني</span>
+S1# <span class="p">show ip ssh</span>
+S1# <span class="p">ssh -l</span> admin 192.168.1.20</pre>
+    </div>
+
+    <div class="cmd-block">
+      <p class="cmd-label">التحقق + إدارة ملفات الإعداد</p>
+<pre>S1# <span class="p">show running-config</span>        <span class="c">! الإعداد الحالي في الـ RAM</span>
+S1# <span class="p">show startup-config</span>        <span class="c">! الإعداد المحفوظ في الـ NVRAM</span>
+S1# <span class="p">show ip interface brief</span>    <span class="c">! ملخص حالة الـ interfaces</span>
+S1# <span class="p">show version</span>               <span class="c">! نسخة الـ IOS + config register</span>
+S1# <span class="p">show interfaces vlan 1</span>
+
+S1# <span class="p">erase startup-config</span>       <span class="c">! مسح الإعداد المحفوظ</span>
+S1# <span class="p">delete vlan.dat</span>            <span class="c">! مسح الـ VLANs على السويتش</span>
+S1# <span class="p">reload</span></pre>
+    </div>
+
+    <div class="cmd-block">
+      <p class="cmd-label">End devices — التحقق من ويندوز</p>
+<pre>C:\&gt; ipconfig /all
+C:\&gt; ipconfig /release
+C:\&gt; ipconfig /renew
+C:\&gt; ping 192.168.1.1
+
+<span class="c"># Linux / macOS</span>
+$ ip address        <span class="c"># أو ifconfig</span>
+$ ping -c 4 192.168.1.1</pre>
+    </div>
+  </section>
+
+  <!-- ================= 2 ================= -->
+  <section id="s2">
+    <div class="sec-head">
+      <div class="sec-num">02</div>
+      <div>
+        <h2 class="sec-title-en">Explain how physical and data link layer protocols support the operation of Ethernet in a switched network</h2>
+        <p class="sec-title-ar">بروتوكولات الطبقة الفيزيائية وطبقة ربط البيانات وعمل الإيثرنت</p>
+      </div>
+    </div>
+
+    <h3>Protocols &amp; Models</h3>
+    <ul>
+      <li><strong>عناصر أي اتصال:</strong> Source → Channel → Destination. وقواعد الاتصال: <span class="term">Message encoding</span>, <span class="term">formatting &amp; encapsulation</span>, <span class="term">size</span>, <span class="term">timing</span> (access method, flow control, response timeout), <span class="term">delivery options</span> (unicast / multicast / broadcast).</li>
+      <li><strong>وظائف البروتوكولات:</strong> Addressing, Reliability, Flow control, Sequencing, Error detection, Application interface.</li>
+      <li><strong>منظمات المعايير:</strong> ISO (نموذج OSI), IEEE (802.3 Ethernet, 802.11 WLAN), IETF (RFCs), IANA/ICANN (IPs &amp; domains), EIA/TIA (الكابلات), ITU-T.</li>
+    </ul>
+
+    <h4>OSI مقابل TCP/IP</h4>
+    <div class="t-scroll">
+      <table>
+        <thead><tr><th class="mono">OSI</th><th class="mono">TCP/IP</th><th class="mono">PDU</th><th>أمثلة</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">7 Application<br>6 Presentation<br>5 Session</td><td class="mono">Application</td><td class="mono">Data</td><td>HTTP, DNS, DHCP, FTP, SMTP</td></tr>
+          <tr><td class="mono">4 Transport</td><td class="mono">Transport</td><td class="mono">Segment / Datagram</td><td>TCP, UDP</td></tr>
+          <tr><td class="mono">3 Network</td><td class="mono">Internet</td><td class="mono">Packet</td><td>IPv4, IPv6, ICMP, ARP*</td></tr>
+          <tr><td class="mono">2 Data Link</td><td class="mono">Network Access</td><td class="mono">Frame</td><td>Ethernet, WLAN, PPP</td></tr>
+          <tr><td class="mono">1 Physical</td><td class="mono">Network Access</td><td class="mono">Bits</td><td>الكابلات، الإشارات، الموصلات</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Encapsulation</strong> = إضافة الـ headers من الأعلى للأسفل، و<strong>De-encapsulation</strong> = إزالتها من الأسفل للأعلى.</p>
+
+    <h3>Physical Layer</h3>
+    <ul>
+      <li><strong>3 معايير:</strong> Physical components, Encoding (تحويل البتات لنمط — Manchester, 4B/5B, 8B/10B), Signaling (تمثيل البت كهربائيًا/ضوئيًا/راديو).</li>
+      <li><strong>Bandwidth</strong> = السعة النظرية (bps/Kbps/Mbps/Gbps) · <strong>Throughput</strong> = المعدل الفعلي · <strong>Goodput</strong> = بيانات المستخدم المفيدة فقط · <strong>Latency</strong> = التأخير.</li>
+      <li><strong>Copper:</strong> يتأثر بـ <span class="term">EMI/RFI</span> و<span class="term">Crosstalk</span> و<span class="term">Attenuation</span> — لذلك بنستخدم اللف المزدوج (twisting) والتدريع.</li>
+    </ul>
+
+    <div class="grid2">
+      <div class="card">
+        <h4>أنواع كابلات UTP</h4>
+        <ul>
+          <li><strong>Straight-through:</strong> أجهزة مختلفة — PC↔Switch, Switch↔Router.</li>
+          <li><strong>Crossover:</strong> أجهزة متشابهة — Switch↔Switch, PC↔PC, PC↔Router, Router↔Router.</li>
+          <li><strong>Rollover (console):</strong> PC↔Console port.</li>
+          <li>معايير الترتيب: <span class="term">T568A</span> و<span class="term">T568B</span>. الـ straight نفس المعيار على الطرفين، الـ crossover معيار مختلف.</li>
+          <li>Categories: Cat3 (تليفون) → Cat5e (1G) → Cat6/6a (10G) → Cat7/8.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>الألياف الضوئية Fiber</h4>
+        <ul>
+          <li><strong>SMF</strong>: نواة صغيرة، ليزر، مسافات طويلة جدًا (100+ كم) — للـ long-haul.</li>
+          <li><strong>MMF</strong>: نواة أكبر، LED/VCSEL، حتى ~550م — داخل الـ campus/data center، فيه <span class="term">modal dispersion</span>.</li>
+          <li>الموصلات: <span class="term">ST, SC, LC, Duplex LC</span>.</li>
+          <li>مميزات على النحاس: مسافة أطول، bandwidth أعلى، مناعة كاملة ضد EMI/RFI، لا تُنصت عليه بسهولة. عيوب: تكلفة وأدوات ومهارة أعلى.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>Wireless</h4>
+    <ul>
+      <li>معايير <span class="term">802.11</span>: a/b/g/n/ac (Wi-Fi 5)/ax (Wi-Fi 6) — تعمل على 2.4 GHz و/أو 5 GHz.</li>
+      <li>معايير أخرى: <span class="term">802.15 Bluetooth</span>, <span class="term">802.16 WiMAX</span>, <span class="term">Zigbee</span>.</li>
+      <li>مكونات الـ WLAN: Wireless AP + Wireless NIC. العيوب: تداخل، أمان أقل، وسط مشترك (shared medium) → half-duplex.</li>
+    </ul>
+
+    <h3>Data Link Layer</h3>
+    <ul>
+      <li><strong>طبقتان فرعيتان:</strong> <span class="term">LLC (802.2)</span> — بتتعامل مع طبقة الشبكة وتحدد نوع البروتوكول، و<span class="term">MAC (802.3 / 802.11)</span> — encapsulation + media access control.</li>
+      <li><strong>WAN topologies:</strong> Point-to-Point, Hub-and-Spoke, Mesh. <strong>LAN topologies:</strong> Star, Extended Star, Bus, Ring.</li>
+      <li><strong>Duplex:</strong> <span class="term">Half-duplex</span> — إرسال أو استقبال (hubs، wireless)، <span class="term">Full-duplex</span> — الاتنين في نفس الوقت (switches).</li>
+      <li><strong>Media Access Control:</strong> <span class="term">CSMA/CD</span> للإيثرنت القديم (اكتشاف التصادم)، <span class="term">CSMA/CA</span> للـ WLAN (تجنّب التصادم). في الشبكات المبدّلة full-duplex الحديثة مفيش تصادمات أصلًا.</li>
+      <li><strong>حقول الـ frame:</strong> Start indicator · Addressing · Type · Control · Data · <span class="term">FCS/CRC</span> للكشف عن الأخطاء · Stop indicator.</li>
+    </ul>
+
+    <h3>Ethernet Switching</h3>
+    <h4>تركيب الـ Ethernet Frame</h4>
+    <div class="t-scroll">
+      <table>
+        <thead><tr><th>الحقل</th><th class="mono">Bytes</th><th>الوظيفة</th></tr></thead>
+        <tbody>
+          <tr><td>Preamble + SFD</td><td class="mono">7 + 1</td><td>مزامنة (لا تُحسب ضمن حجم الـ frame)</td></tr>
+          <tr><td>Destination MAC</td><td class="mono">6</td><td>عنوان الوجهة</td></tr>
+          <tr><td>Source MAC</td><td class="mono">6</td><td>عنوان المصدر</td></tr>
+          <tr><td>Type / Length</td><td class="mono">2</td><td>0x0800 = IPv4، 0x86DD = IPv6، 0x0806 = ARP</td></tr>
+          <tr><td>Data</td><td class="mono">46 – 1500</td><td>الـ payload (padding لو أقل من 46)</td></tr>
+          <tr><td>FCS</td><td class="mono">4</td><td>CRC للكشف عن الأخطاء</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>الحد الأدنى <strong>64 bytes</strong> والأقصى <strong>1518 bytes</strong>. أصغر من 64 = <span class="pill pill-down">runt</span>، أكبر من 1518 = <span class="pill pill-down">giant</span>. الـ <span class="term">jumbo frames</span> بتوصل 9000 bytes.</p>
+
+    <h4>MAC Address</h4>
+    <ul>
+      <li>48 bit = 12 hex، محروق في الـ NIC (BIA). أول 6 hex = <span class="term">OUI</span> (رقم المُصنّع)، آخر 6 hex = رقم فريد للجهاز.</li>
+      <li><strong>Unicast</strong> لجهاز واحد · <strong>Broadcast</strong> = <span class="term">FF:FF:FF:FF:FF:FF</span> · <strong>Multicast</strong> يبدأ بـ <span class="term">01-00-5E</span> لـ IPv4 و<span class="term">33-33</span> لـ IPv6.</li>
+      <li><strong>MAC مقابل IP:</strong> الـ MAC عنوان محلي بيتغير عند كل hop، والـ IP عنوان منطقي بيفضل ثابت من المصدر للوجهة. <span class="term">ARP</span> بيربط IPv4 بـ MAC، و<span class="term">ND/NDP</span> بيعمل نفس الدور في IPv6.</li>
+    </ul>
+
+    <h4>عمل الـ Switch</h4>
+    <ul>
+      <li><strong>Learn:</strong> بيقرأ الـ source MAC ويضيفه للـ MAC address table مع رقم البورت. <strong>Forward:</strong> بيدوّر على الـ destination MAC — لو موجود يبعت للبورت المحدد، لو مش موجود يعمل <span class="term">flood</span> لكل البورتات ما عدا الوارد منه.</li>
+      <li><strong>طرق التمرير:</strong> <span class="term">Store-and-forward</span> (يستقبل الـ frame كامل ويتحقق من الـ FCS — الأدق، وهو اللي بتستخدمه Cisco)، و<span class="term">Cut-through</span> (يمرر بعد قراءة الـ destination MAC — الأسرع؛ منه <span class="term">fast-forward</span> و<span class="term">fragment-free</span>).</li>
+      <li><strong>Buffering:</strong> port-based memory أو shared memory.</li>
+      <li><strong>Collision domain:</strong> كل بورت في السويتش = collision domain مستقل. <strong>Broadcast domain:</strong> كل الـ switch (أو الـ VLAN) = broadcast domain واحد — الـ router هو اللي بيقسّمها.</li>
+      <li><span class="term">Auto-MDIX</span> بيكتشف نوع الكابل ويعدّل تلقائيًا فمش محتاج تفرّق بين straight و crossover.</li>
+    </ul>
+
+    <div class="cmd-block">
+      <p class="cmd-label">أوامر الـ Layer 1 &amp; 2</p>
+<pre>S1# <span class="p">show mac address-table</span>
+S1# <span class="p">clear mac address-table dynamic</span>
+S1# <span class="p">show interfaces status</span>
+S1# <span class="p">show interfaces</span> fa0/1        <span class="c">! runts, giants, CRC, collisions</span>
+
+<span class="c">! ضبط السرعة والـ duplex يدويًا (لتجنّب duplex mismatch)</span>
+S1(config)# <span class="p">interface</span> fa0/1
+S1(config-if)# <span class="p">speed</span> 100
+S1(config-if)# <span class="p">duplex</span> full
+S1(config-if)# <span class="p">mdix auto</span>
+S1(config-if)# <span class="p">description</span> Link to PC-A</pre>
+    </div>
+  </section>
+
+  <!-- ================= 3 ================= -->
+  <section id="s3">
+    <div class="sec-head">
+      <div class="sec-num">03</div>
+      <div>
+        <h2 class="sec-title-en">Configure routers to enable end-to-end connectivity between remote devices</h2>
+        <p class="sec-title-ar">إعداد الراوترات لتحقيق اتصال من طرف لطرف بين أجهزة بعيدة</p>
+      </div>
+    </div>
+
+    <h3>النظري</h3>
+    <ul>
+      <li><strong>وظيفة الراوتر:</strong> يفصل بين الـ broadcast domains ويوجّه الـ packets بناءً على <span class="term">destination IP</span>. عند كل hop بيعمل de-encapsulate للـ frame، يفحص الـ IP header، يقرر المسار، ثم يعمل encapsulate بـ frame جديد بعناوين MAC جديدة.</li>
+      <li><strong>مكونات الراوتر:</strong> CPU · <span class="term">RAM</span> (running-config, routing table, ARP cache — متطايرة) · <span class="term">ROM</span> (bootup instructions + POST) · <span class="term">NVRAM</span> (startup-config) · <span class="term">Flash</span> (IOS image).</li>
+      <li><strong>Boot process:</strong> POST → تحميل الـ bootstrap → تحميل الـ IOS → تحميل الـ startup-config.</li>
+      <li><strong>Default gateway</strong> = عنوان الـ interface على الراوتر في نفس شبكة الجهاز — من غيره الجهاز مش هيوصل لأي شبكة تانية.</li>
+      <li><strong>Path determination:</strong> الراوتر بيدوّر على أطول تطابق <span class="term">longest prefix match</span>. لو فيه أكتر من مسار بيختار الأقل <span class="term">metric</span>، ولو التساوي بيستخدم <span class="term">Administrative Distance</span> للترجيح بين البروتوكولات.</li>
+    </ul>
+
+    <h4>رموز جدول التوجيه</h4>
+    <div class="t-scroll">
+      <table>
+        <thead><tr><th class="mono">Code</th><th>المعنى</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">C</td><td>Directly connected — شبكة موصولة مباشرة على interface مفعّل</td></tr>
+          <tr><td class="mono">L</td><td>Local — عنوان الـ interface نفسه بـ /32 (أو /128 في IPv6)</td></tr>
+          <tr><td class="mono">S</td><td>Static route — مُدخل يدويًا</td></tr>
+          <tr><td class="mono">S*</td><td>Default static route (0.0.0.0/0)</td></tr>
+          <tr><td class="mono">O / D / R</td><td>OSPF / EIGRP / RIP — مسارات ديناميكية</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cmd-block">
+      <p class="cmd-label">إعداد الراوتر الأساسي</p>
+<pre>Router&gt; <span class="p">enable</span>
+Router# <span class="p">configure terminal</span>
+Router(config)# <span class="p">hostname</span> R1
+R1(config)# <span class="p">enable secret</span> class
+R1(config)# <span class="p">service password-encryption</span>
+R1(config)# <span class="p">banner motd</span> #Authorized Access Only!#
+
+R1(config)# <span class="p">line console 0</span>
+R1(config-line)# <span class="p">password</span> cisco
+R1(config-line)# <span class="p">login</span>
+R1(config-line)# <span class="p">logging synchronous</span>
+R1(config-line)# <span class="p">exit</span>
+
+R1(config)# <span class="p">line vty 0 4</span>
+R1(config-line)# <span class="p">password</span> cisco
+R1(config-line)# <span class="p">login</span>
+R1(config-line)# <span class="p">transport input ssh</span></pre>
+    </div>
+
+    <div class="cmd-block">
+      <p class="cmd-label">إعداد الـ interfaces (dual stack)</p>
+<pre>R1(config)# <span class="p">ipv6 unicast-routing</span>        <span class="c">! ضروري لتفعيل توجيه IPv6</span>
+
+R1(config)# <span class="p">interface</span> gigabitEthernet 0/0/0
+R1(config-if)# <span class="p">description</span> Link to LAN 1
+R1(config-if)# <span class="p">ip address</span> 192.168.10.1 255.255.255.0
+R1(config-if)# <span class="p">ipv6 address</span> 2001:db8:acad:1::1/64
+R1(config-if)# <span class="p">ipv6 address</span> fe80::1 <span class="p">link-local</span>
+R1(config-if)# <span class="p">no shutdown</span>
+R1(config-if)# <span class="p">exit</span>
+
+R1(config)# <span class="p">interface</span> gigabitEthernet 0/0/1
+R1(config-if)# <span class="p">ip address</span> 209.165.200.225 255.255.255.224
+R1(config-if)# <span class="p">ipv6 address</span> 2001:db8:acad:2::1/64
+R1(config-if)# <span class="p">no shutdown</span>
+
+<span class="c">! Loopback — واجهة منطقية للاختبار، دائمًا up</span>
+R1(config)# <span class="p">interface loopback</span> 0
+R1(config-if)# <span class="p">ip address</span> 10.0.0.1 255.255.255.0</pre>
+    </div>
+
+    <div class="cmd-block">
+      <p class="cmd-label">Static &amp; default routes</p>
+<pre><span class="c">! static route لشبكة محددة</span>
+R1(config)# <span class="p">ip route</span> 192.168.20.0 255.255.255.0 209.165.200.226
+R1(config)# <span class="p">ipv6 route</span> 2001:db8:acad:3::/64 2001:db8:acad:2::2
+
+<span class="c">! default route — أي وجهة غير معروفة</span>
+R1(config)# <span class="p">ip route</span> 0.0.0.0 0.0.0.0 209.165.200.226
+R1(config)# <span class="p">ipv6 route</span> ::/0 2001:db8:acad:2::2</pre>
+    </div>
+
+    <div class="cmd-block">
+      <p class="cmd-label">التحقق</p>
+<pre>R1# <span class="p">show ip route</span>
+R1# <span class="p">show ipv6 route</span>
+R1# <span class="p">show ip interface brief</span>
+R1# <span class="p">show ipv6 interface brief</span>
+R1# <span class="p">show interfaces</span> g0/0/0
+R1# <span class="p">show protocols</span>
+R1# <span class="p">show cdp neighbors detail</span>    <span class="c">! اكتشاف أجهزة Cisco المجاورة</span>
+R1# <span class="p">show lldp neighbors</span>           <span class="c">! بديل مفتوح ومتعدد المصنّعين</span>
+
+<span class="c">! تفعيل/تعطيل بروتوكولات الاكتشاف</span>
+R1(config)# <span class="p">cdp run</span>   /  <span class="p">no cdp run</span>
+R1(config)# <span class="p">lldp run</span>
+R1(config-if)# <span class="p">lldp transmit</span> / <span class="p">lldp receive</span></pre>
+    </div>
+  </section>
+
+  <!-- ================= 4 ================= -->
+  <section id="s4">
+    <div class="sec-head">
+      <div class="sec-num">04</div>
+      <div>
+        <h2 class="sec-title-en">Create IPv4 and IPv6 addressing schemes and verify network connectivity between devices</h2>
+        <p class="sec-title-ar">تصميم مخططات عنونة IPv4 و IPv6 والتحقق من الاتصال</p>
+      </div>
+    </div>
+
+    <h3>IPv4</h3>
+    <ul>
+      <li>32 bit مكتوبة <span class="term">dotted decimal</span>. الـ <strong>subnet mask</strong> بيفصل جزء الشبكة عن جزء المضيف عن طريق عملية <span class="term">AND</span> المنطقية.</li>
+      <li>كل شبكة فيها 3 أنواع عناوين: <strong>Network address</strong> (كل بتات المضيف أصفار)، <strong>Host addresses</strong>، <strong>Broadcast address</strong> (كل بتات المضيف واحدات).</li>
+      <li><strong>أنواع البث:</strong> Unicast (لواحد) · Broadcast (للكل — 255.255.255.255 محدود، أو broadcast الشبكة) · Multicast (لمجموعة — 224.0.0.0/4).</li>
+    </ul>
+
+    <h4>عناوين خاصة ومحجوزة</h4>
+    <div class="t-scroll">
+      <table>
+        <thead><tr><th class="mono">النطاق</th><th>النوع</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">10.0.0.0/8</td><td>Private (RFC 1918)</td></tr>
+          <tr><td class="mono">172.16.0.0/12</td><td>Private (172.16 – 172.31)</td></tr>
+          <tr><td class="mono">192.168.0.0/16</td><td>Private</td></tr>
+          <tr><td class="mono">127.0.0.0/8</td><td>Loopback — اختبار الـ TCP/IP stack محليًا</td></tr>
+          <tr><td class="mono">169.254.0.0/16</td><td>Link-local / APIPA — علامة على فشل الـ DHCP</td></tr>
+          <tr><td class="mono">192.0.2.0/24</td><td>TEST-NET — للتوثيق والأمثلة</td></tr>
+          <tr><td class="mono">224.0.0.0/4</td><td>Class D — Multicast</td></tr>
+          <tr><td class="mono">240.0.0.0/4</td><td>Class E — تجريبي</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>NAT</strong> بيترجم العناوين الخاصة لعنوان عام واحد للخروج للإنترنت.</p>
+
+    <h4>Subnetting</h4>
+    <ul>
+      <li><strong>عدد الشبكات الفرعية</strong> = 2<sup>n</sup> حيث n = عدد البتات المستعارة. <strong>عدد المضيفات الصالحة</strong> = 2<sup>h</sup> − 2 حيث h = بتات المضيف المتبقية.</li>
+      <li><strong>VLSM</strong> = تقسيم بأطوال مختلفة لتقليل الهدر — ابدأ دائمًا من الشبكة الفرعية الأكبر ثم الأصغر.</li>
+      <li>وصلة point-to-point بين راوترين محتاجة <span class="term">/30</span> (عنوانان صالحان) — أو <span class="term">/31</span> في التصاميم الحديثة.</li>
+    </ul>
+    <div class="t-scroll">
+      <table>
+        <thead><tr><th class="mono">Prefix</th><th class="mono">Mask</th><th class="mono">Hosts</th><th class="mono">Block size</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">/24</td><td class="mono">255.255.255.0</td><td class="mono">254</td><td class="mono">256</td></tr>
+          <tr><td class="mono">/25</td><td class="mono">255.255.255.128</td><td class="mono">126</td><td class="mono">128</td></tr>
+          <tr><td class="mono">/26</td><td class="mono">255.255.255.192</td><td class="mono">62</td><td class="mono">64</td></tr>
+          <tr><td class="mono">/27</td><td class="mono">255.255.255.224</td><td class="mono">30</td><td class="mono">32</td></tr>
+          <tr><td class="mono">/28</td><td class="mono">255.255.255.240</td><td class="mono">14</td><td class="mono">16</td></tr>
+          <tr><td class="mono">/29</td><td class="mono">255.255.255.248</td><td class="mono">6</td><td class="mono">8</td></tr>
+          <tr><td class="mono">/30</td><td class="mono">255.255.255.252</td><td class="mono">2</td><td class="mono">4</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>IPv6</h3>
+    <ul>
+      <li><strong>ليه IPv6؟</strong> نفاد عناوين IPv4، و<span class="term">IoT</span>، ومعالجة أبسط في الراوترات بدون NAT.</li>
+      <li><strong>التعايش:</strong> <span class="term">Dual stack</span> (الاتنين مع بعض) · <span class="term">Tunneling</span> (IPv6 داخل IPv4) · <span class="term">Translation / NAT64</span>.</li>
+      <li>128 bit مكتوبة 8 مجموعات hextets. <strong>قواعد الاختصار:</strong> (1) حذف الأصفار البادئة في كل hextet، (2) استبدال سلسلة واحدة متتالية من الأصفار بـ <code>::</code> <strong>مرة واحدة فقط</strong>.</li>
+    </ul>
+
+    <div class="t-scroll">
+      <table>
+        <thead><tr><th>النوع</th><th class="mono">النطاق</th><th>الوصف</th></tr></thead>
+        <tbody>
+          <tr><td>GUA</td><td class="mono">2000::/3</td><td>عنوان عام قابل للتوجيه على الإنترنت</td></tr>
+          <tr><td>LLA</td><td class="mono">fe80::/10</td><td>Link-local — إلزامي على كل interface، لا يخرج من الشبكة، يُستخدم كـ next-hop و default gateway</td></tr>
+          <tr><td>ULA</td><td class="mono">fc00::/7</td><td>Unique local — شبيه بالعناوين الخاصة</td></tr>
+          <tr><td>Loopback</td><td class="mono">::1/128</td><td>اختبار محلي</td></tr>
+          <tr><td>Unspecified</td><td class="mono">::/128</td><td>عنوان مصدر أثناء الـ DAD</td></tr>
+          <tr><td>Multicast</td><td class="mono">ff00::/8</td><td><span class="term">ff02::1</span> كل العُقد · <span class="term">ff02::2</span> كل الراوترات · <span class="term">ff02::1:ff00:0/104</span> solicited-node</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>تركيب الـ GUA:</strong> Global Routing Prefix (/48) + Subnet ID (16 bit) + Interface ID (64 bit). مفيش broadcast في IPv6 — استُبدل بالـ multicast.</p>
+
+    <h4>طرق الحصول على عنوان IPv6</h4>
+    <ul>
+      <li><strong>SLAAC</strong> — الجهاز يبني عنوانه من الـ prefix اللي في رسالة الـ <span class="term">RA</span>، ويكوّن الـ Interface ID إما بـ <span class="term">EUI-64</span> (إدخال FFFE في نص الـ MAC وقلب بت الـ U/L) أو برقم عشوائي.</li>
+      <li><strong>Stateless DHCPv6</strong> — الـ prefix من الـ RA، وباقي المعلومات (DNS مثلًا) من سيرفر DHCPv6.</li>
+      <li><strong>Stateful DHCPv6</strong> — كل شيء من سيرفر DHCPv6 (شبيه بـ DHCPv4).</li>
+      <li><strong>ICMPv6 NDP:</strong> رسائل <span class="term">RS/RA</span> لاكتشاف الراوتر، و<span class="term">NS/NA</span> لتحليل العناوين (بديل ARP) و<span class="term">DAD</span> للتأكد من عدم تكرار العنوان.</li>
+    </ul>
+
+    <h3>ICMP والتحقق من الاتصال</h3>
+    <ul>
+      <li><strong>رسائل مشتركة:</strong> Echo request / Echo reply · Destination unreachable · Time exceeded (انتهاء الـ TTL). في IPv6 تُضاف رسائل الـ NDP.</li>
+      <li><strong>منهج الاختبار:</strong> ping 127.0.0.1 (الـ stack المحلي) → ping العنوان المحلي → ping الـ default gateway → ping وجهة بعيدة → traceroute لتحديد أين ينقطع المسار.</li>
+    </ul>
+
+    <div class="cmd-block">
+      <p class="cmd-label">أوامر التحقق</p>
+<pre><span class="c">! على الراوتر/السويتش</span>
+R1# <span class="p">ping</span> 192.168.10.10
+R1# <span class="p">ping</span> 2001:db8:acad:1::10
+R1# <span class="p">ping</span>                        <span class="c">! extended ping — تحدد source, repeat, size</span>
+R1# <span class="p">traceroute</span> 192.168.20.10
+R1# <span class="p">show ip arp</span>  /  <span class="p">show arp</span>
+R1# <span class="p">show ipv6 neighbors</span>
+R1# <span class="p">clear ip arp</span>
+
+<span class="c"># على الويندوز</span>
+C:\&gt; ping -6 2001:db8:acad:1::1
+C:\&gt; tracert 8.8.8.8
+C:\&gt; arp -a
+C:\&gt; route print
+C:\&gt; netstat -r</pre>
+    </div>
+  </section>
+
+  <!-- ================= 5 ================= -->
+  <section id="s5">
+    <div class="sec-head">
+      <div class="sec-num">05</div>
+      <div>
+        <h2 class="sec-title-en">Explain how the upper layers of the OSI model support network applications</h2>
+        <p class="sec-title-ar">كيف تدعم الطبقات العليا في نموذج OSI تطبيقات الشبكة</p>
+      </div>
+    </div>
+
+    <h3>Transport Layer (Layer 4)</h3>
+    <ul>
+      <li><strong>الوظائف:</strong> تتبع المحادثات لكل تطبيق، تقسيم البيانات <span class="term">segmentation</span>، إعادة التجميع، و<span class="term">multiplexing</span> عن طريق أرقام المنافذ.</li>
+      <li><strong>الـ Socket</strong> = IP + Port. الـ <strong>socket pair</strong> بيحدد المحادثة بالكامل بين طرفين.</li>
+    </ul>
+
+    <div class="grid2">
+      <div class="card">
+        <h4>TCP — موثوق (20 bytes header)</h4>
+        <ul>
+          <li><strong>Connection-oriented:</strong> <span class="term">3-way handshake</span> — SYN → SYN,ACK → ACK.</li>
+          <li><strong>الإنهاء:</strong> FIN → ACK → FIN → ACK (أربع رسائل).</li>
+          <li><strong>الموثوقية:</strong> sequence numbers لإعادة الترتيب، acknowledgements وإعادة الإرسال عند الفقد، <span class="term">SACK</span> لإعادة إرسال المفقود فقط.</li>
+          <li><strong>Flow control:</strong> نافذة متغيرة <span class="term">sliding window</span> + <span class="term">window size</span> لمنع إغراق المستقبل، و<span class="term">MSS</span> لأقصى حجم بيانات.</li>
+          <li><strong>Congestion avoidance:</strong> تقليل حجم النافذة عند اكتشاف ازدحام.</li>
+          <li>الاستخدام: HTTP/HTTPS, FTP, SMTP, SSH.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>UDP — سريع (8 bytes header)</h4>
+        <ul>
+          <li><strong>Connectionless</strong> — بدون handshake وبدون ضمان وصول أو ترتيب.</li>
+          <li>الوحدة اسمها <span class="term">datagram</span>؛ إعادة الترتيب مسؤولية التطبيق.</li>
+          <li>overhead أقل بكتير → مناسب للـ real-time.</li>
+          <li>الاستخدام: DNS, DHCP, TFTP, VoIP, video streaming, SNMP.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>نطاقات أرقام المنافذ</h4>
+    <div class="t-scroll">
+      <table>
+        <thead><tr><th>النطاق</th><th class="mono">الأرقام</th><th>الاستخدام</th></tr></thead>
+        <tbody>
+          <tr><td>Well-known</td><td class="mono">0 – 1023</td><td>خدمات وتطبيقات شائعة</td></tr>
+          <tr><td>Registered</td><td class="mono">1024 – 49151</td><td>تطبيقات مسجّلة لدى IANA</td></tr>
+          <tr><td>Private / Dynamic</td><td class="mono">49152 – 65535</td><td>منافذ مصدر مؤقتة للعميل (ephemeral)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Application Layer (Layers 5–7)</h3>
+    <ul>
+      <li><strong>Presentation (6):</strong> ترميز/تنسيق البيانات (GIF, JPEG, MPEG)، الضغط، والتشفير.</li>
+      <li><strong>Session (5):</strong> إنشاء وإدارة وإنهاء الجلسات بين التطبيقات.</li>
+      <li><strong>Client/Server</strong> — سيرفر مركزي يقدّم الخدمة. <strong>Peer-to-Peer (P2P)</strong> — كل جهاز يعمل كعميل وسيرفر في نفس الوقت (BitTorrent, Direct Connect) — لا مركزية لكن أمان أضعف.</li>
+    </ul>
+
+    <div class="t-scroll">
+      <table>
+        <thead><tr><th>البروتوكول</th><th class="mono">Port</th><th class="mono">L4</th><th>الوظيفة</th></tr></thead>
+        <tbody>
+          <tr><td>HTTP</td><td class="mono">80</td><td class="mono">TCP</td><td>تصفح الويب — GET, POST, PUT</td></tr>
+          <tr><td>HTTPS</td><td class="mono">443</td><td class="mono">TCP</td><td>HTTP مشفّر بـ TLS/SSL</td></tr>
+          <tr><td>SMTP</td><td class="mono">25</td><td class="mono">TCP</td><td>إرسال البريد</td></tr>
+          <tr><td>POP3</td><td class="mono">110</td><td class="mono">TCP</td><td>تنزيل البريد وحذفه من السيرفر</td></tr>
+          <tr><td>IMAP</td><td class="mono">143</td><td class="mono">TCP</td><td>استقبال البريد مع إبقاء نسخة على السيرفر</td></tr>
+          <tr><td>DNS</td><td class="mono">53</td><td class="mono">UDP/TCP</td><td>ترجمة الأسماء لعناوين IP</td></tr>
+          <tr><td>DHCP</td><td class="mono">67 / 68</td><td class="mono">UDP</td><td>توزيع العناوين تلقائيًا</td></tr>
+          <tr><td>FTP</td><td class="mono">20 / 21</td><td class="mono">TCP</td><td>21 للتحكم و20 للبيانات</td></tr>
+          <tr><td>TFTP</td><td class="mono">69</td><td class="mono">UDP</td><td>نقل ملفات بسيط — نسخ الـ IOS والإعدادات</td></tr>
+          <tr><td>Telnet</td><td class="mono">23</td><td class="mono">TCP</td><td>إدارة عن بُعد — غير مشفّر</td></tr>
+          <tr><td>SSH</td><td class="mono">22</td><td class="mono">TCP</td><td>إدارة عن بُعد مشفّرة</td></tr>
+          <tr><td>SMB</td><td class="mono">445</td><td class="mono">TCP</td><td>مشاركة ملفات ويندوز</td></tr>
+          <tr><td>SNMP</td><td class="mono">161 / 162</td><td class="mono">UDP</td><td>مراقبة وإدارة الأجهزة</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>DNS — سجلات وهيكل</h4>
+    <ul>
+      <li><strong>أنواع السجلات:</strong> <span class="term">A</span> عنوان IPv4 · <span class="term">AAAA</span> عنوان IPv6 · <span class="term">NS</span> سيرفر الأسماء · <span class="term">MX</span> سيرفر البريد · <span class="term">CNAME</span> اسم مستعار.</li>
+      <li>الهرمية: Root → TLD (.com, .net, .org, .eg) → النطاقات الفرعية. لو السيرفر مش عارف الإجابة بيسأل سيرفر أعلى.</li>
+    </ul>
+
+    <h4>DHCPv4 — دورة DORA</h4>
+    <ul>
+      <li><strong>D</strong>iscover (broadcast من العميل) → <strong>O</strong>ffer (عرض من السيرفر) → <strong>R</strong>equest (العميل يقبل) → <strong>A</strong>cknowledge (تأكيد وبدء مدة الـ lease).</li>
+      <li>لو فشل الـ DHCP الجهاز بياخد عنوان <span class="term">APIPA 169.254.x.x</span> ومش هيوصل لبرّه الشبكة المحلية.</li>
+    </ul>
+
+    <div class="cmd-block">
+      <p class="cmd-label">أوامر طبقة التطبيقات</p>
+<pre>C:\&gt; nslookup cisco.com
+C:\&gt; nslookup -type=mx cisco.com
+C:\&gt; ipconfig /displaydns
+C:\&gt; ipconfig /flushdns
+C:\&gt; netstat -n          <span class="c"># الاتصالات النشطة وأرقام المنافذ</span>
+C:\&gt; netstat -abno
+
+<span class="c">! على الراوتر</span>
+R1# <span class="p">show ip nat translations</span>
+R1(config)# <span class="p">ip name-server</span> 8.8.8.8
+R1(config)# <span class="p">ip domain-lookup</span>
+R1(config)# <span class="p">no ip domain-lookup</span>   <span class="c">! يمنع محاولة ترجمة الأوامر الخاطئة كأسماء نطاقات</span></pre>
+    </div>
+  </section>
+
+  <!-- ================= 6 ================= -->
+  <section id="s6">
+    <div class="sec-head">
+      <div class="sec-num">06</div>
+      <div>
+        <h2 class="sec-title-en">Configure a small network with security best practices</h2>
+        <p class="sec-title-ar">إعداد شبكة صغيرة وفق أفضل الممارسات الأمنية</p>
+      </div>
+    </div>
+
+    <h3>تصميم الشبكة الصغيرة</h3>
+    <ul>
+      <li><strong>معايير اختيار الأجهزة:</strong> التكلفة، عدد وسرعة المنافذ، قابلية التوسّع (expandability — fixed أم modular)، مميزات نظام التشغيل، الـ redundancy.</li>
+      <li><strong>عوامل التخطيط:</strong> أنواع الترافيك (voice/video/data)، بروتوكولات الشبكة، أمن الشبكة، والنمو المستقبلي.</li>
+    </ul>
+
+    <h3>التهديدات الأمنية</h3>
+    <div class="grid2">
+      <div class="card">
+        <h4>أنواع الهجمات</h4>
+        <ul>
+          <li><strong>Malware:</strong> <span class="term">Virus</span> (يحتاج تشغيل من المستخدم)، <span class="term">Worm</span> (ينتشر ذاتيًا)، <span class="term">Trojan</span> (متخفّي في برنامج شرعي)، Ransomware, Spyware, Adware.</li>
+          <li><strong>Reconnaissance:</strong> استطلاع وجمع معلومات (ping sweeps, port scans).</li>
+          <li><strong>Access attacks:</strong> password attacks, trust exploitation, port redirection, <span class="term">man-in-the-middle</span>.</li>
+          <li><strong>DoS / DDoS:</strong> إغراق الجهاز أو الوصلة لمنع الخدمة عن المستخدمين الشرعيين.</li>
+          <li><strong>Social engineering:</strong> Pretexting, Phishing, Vishing, Tailgating, Shoulder surfing.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>وسائل التخفيف</h4>
+        <ul>
+          <li><strong>Backup, Upgrade, Update, Patch</strong> بشكل دوري.</li>
+          <li><strong>AAA:</strong> Authentication (من أنت؟) · Authorization (ماذا يُسمح لك؟) · Accounting (ماذا فعلت؟).</li>
+          <li><strong>Firewalls:</strong> packet filtering, application filtering, URL filtering, stateful packet inspection (SPI).</li>
+          <li><strong>Endpoint security:</strong> antivirus/antimalware + host-based firewall + IPS.</li>
+          <li><strong>كلمات مرور قوية:</strong> 8 خانات على الأقل، خليط أحرف/أرقام/رموز، بدون كلمات قاموسية، وتغيير دوري.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cmd-block">
+      <p class="cmd-label">تقوية الجهاز — Device Hardening</p>
+<pre><span class="c">! كلمات المرور والتشفير</span>
+R1(config)# <span class="p">enable secret</span> Str0ngP@ss     <span class="c">! مشفّرة بـ MD5/SHA — أفضل من enable password</span>
+R1(config)# <span class="p">service password-encryption</span>   <span class="c">! تشفير ضعيف لكل الباسوردات النصية</span>
+R1(config)# <span class="p">security passwords min-length</span> 8
+
+<span class="c">! منع هجمات تخمين كلمة المرور</span>
+R1(config)# <span class="p">login block-for</span> 120 <span class="p">attempts</span> 3 <span class="p">within</span> 60
+
+<span class="c">! قطع الجلسات الخاملة</span>
+R1(config)# <span class="p">line vty 0 4</span>
+R1(config-line)# <span class="p">exec-timeout</span> 5 0
+R1(config-line)# <span class="p">transport input ssh</span>       <span class="c">! SSH فقط — امنع Telnet</span>
+R1(config-line)# <span class="p">login local</span>
+
+<span class="c">! رسالة تحذير قانونية (لا تكتب Welcome أبدًا)</span>
+R1(config)# <span class="p">banner motd</span> $Unauthorized access is prohibited!$
+
+<span class="c">! إغلاق المنافذ غير المستخدمة</span>
+S1(config)# <span class="p">interface range</span> fa0/5 - 24
+S1(config-if-range)# <span class="p">shutdown</span></pre>
+    </div>
+
+    <div class="cmd-block">
+      <p class="cmd-label">Port Security على الـ switch</p>
+<pre>S1(config)# <span class="p">interface</span> fa0/1
+S1(config-if)# <span class="p">switchport mode access</span>            <span class="c">! لازم access أولاً</span>
+S1(config-if)# <span class="p">switchport port-security</span>
+S1(config-if)# <span class="p">switchport port-security maximum</span> 2
+S1(config-if)# <span class="p">switchport port-security mac-address sticky</span>
+S1(config-if)# <span class="p">switchport port-security violation</span> restrict
+S1(config-if)# <span class="p">switchport port-security aging time</span> 10
+S1(config-if)# <span class="p">switchport port-security aging type inactivity</span>
+
+<span class="c">! التحقق</span>
+S1# <span class="p">show port-security</span>
+S1# <span class="p">show port-security interface</span> fa0/1
+S1# <span class="p">show port-security address</span>
+
+<span class="c">! استعادة بورت في حالة err-disabled</span>
+S1(config-if)# <span class="p">shutdown</span>
+S1(config-if)# <span class="p">no shutdown</span></pre>
+    </div>
+
+    <div class="t-scroll">
+      <table>
+        <thead><tr><th>Violation mode</th><th>يسقط الترافيك</th><th>يرسل syslog/SNMP</th><th>يزيد العداد</th><th>يعطّل البورت</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">protect</td><td>نعم</td><td>لا</td><td>لا</td><td>لا</td></tr>
+          <tr><td class="mono">restrict</td><td>نعم</td><td>نعم</td><td>نعم</td><td>لا</td></tr>
+          <tr><td class="mono">shutdown <em>(افتراضي)</em></td><td>نعم</td><td>نعم</td><td>نعم</td><td>نعم — err-disabled</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cmd-block">
+      <p class="cmd-label">DHCP Snooping — الحماية من سيرفر DHCP مزيّف</p>
+<pre>S1(config)# <span class="p">ip dhcp snooping</span>
+S1(config)# <span class="p">ip dhcp snooping vlan</span> 5,10
+S1(config)# <span class="p">interface</span> g0/1
+S1(config-if)# <span class="p">ip dhcp snooping trust</span>          <span class="c">! البورت المتجه للسيرفر الشرعي</span>
+S1(config-if)# <span class="p">exit</span>
+S1(config)# <span class="p">interface range</span> fa0/5 - 24
+S1(config-if-range)# <span class="p">ip dhcp snooping limit rate</span> 6
+S1# <span class="p">show ip dhcp snooping binding</span></pre>
+    </div>
+
+    <div class="cmd-block">
+      <p class="cmd-label">النسخ الاحتياطي واستعادة الإعدادات</p>
+<pre>R1# <span class="p">copy running-config startup-config</span>
+R1# <span class="p">copy running-config tftp:</span>
+R1# <span class="p">copy running-config usbflash0:/R1-config.bak</span>
+R1# <span class="p">copy tftp: running-config</span>
+R1# <span class="p">show file systems</span>
+R1# <span class="p">show flash</span>
+R1# <span class="p">dir usbflash0:</span></pre>
+    </div>
+  </section>
+
+  <!-- ================= 7 ================= -->
+  <section id="s7">
+    <div class="sec-head">
+      <div class="sec-num">07</div>
+      <div>
+        <h2 class="sec-title-en">Troubleshoot connectivity in a small network</h2>
+        <p class="sec-title-ar">استكشاف أعطال الاتصال في شبكة صغيرة وإصلاحها</p>
+      </div>
+    </div>
+
+    <h3>منهجية استكشاف الأعطال — 7 خطوات</h3>
+    <ul>
+      <li>1. تحديد المشكلة · 2. وضع نظرية للسبب المحتمل · 3. اختبار النظرية · 4. وضع خطة عمل · 5. تنفيذ الحل · 6. التحقق من كامل وظائف النظام · 7. <strong>توثيق</strong> النتائج والإجراءات.</li>
+    </ul>
+    <h4>أساليب الاستكشاف</h4>
+    <ul>
+      <li><strong>Bottom-up</strong> — ابدأ من الطبقة الفيزيائية للأعلى (مفيدة عند الشك في مشكلة كابل).</li>
+      <li><strong>Top-down</strong> — ابدأ من التطبيق للأسفل (عند الشك في مشكلة برمجية).</li>
+      <li><strong>Divide-and-conquer</strong> — ابدأ من طبقة وسطى (عادة Layer 3 بـ ping) وحدد الاتجاه.</li>
+      <li><strong>Follow-the-path</strong> · <strong>Substitution</strong> (استبدال المكوّن) · <strong>Comparison</strong> (مقارنة بإعداد سليم) · <strong>Educated guess</strong>.</li>
+    </ul>
+
+    <h4>قراءة حالة الـ interface</h4>
+    <div class="t-scroll">
+      <table>
+        <thead><tr><th class="mono">Status / Protocol</th><th>المعنى</th><th>السبب المحتمل</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">up / up</td><td><span class="pill pill-up">تعمل</span></td><td>كل شيء سليم</td></tr>
+          <tr><td class="mono">down / down</td><td><span class="pill pill-down">لا توجد إشارة</span></td><td>كابل مفصول أو تالف، نوع كابل خطأ، الطرف الآخر مغلق</td></tr>
+          <tr><td class="mono">administratively down / down</td><td><span class="pill pill-warn">مغلقة يدويًا</span></td><td>ناقص أمر <code>no shutdown</code></td></tr>
+          <tr><td class="mono">up / down</td><td><span class="pill pill-warn">مشكلة Layer 2</span></td><td>عدم تطابق الـ encapsulation أو keepalives</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>أعطال شائعة وحلولها</h4>
+    <div class="t-scroll">
+      <table>
+        <thead><tr><th>العَرَض</th><th>السبب المرجّح</th><th>الفحص</th></tr></thead>
+        <tbody>
+          <tr><td>ping محلي يشتغل والبعيد لا</td><td>Default gateway خطأ أو ناقص</td><td><code>ipconfig /all</code> · <code>show ip route</code></td></tr>
+          <tr><td>الجهاز عليه 169.254.x.x</td><td>فشل الـ DHCP</td><td><code>ipconfig /renew</code> · تحقق من وصول الـ DHCP</td></tr>
+          <tr><td>أداء بطيء + أخطاء CRC وcollisions</td><td>Duplex mismatch أو تداخل/كابل تالف</td><td><code>show interfaces</code></td></tr>
+          <tr><td>الاسم لا يُترجم لكن الـ IP يعمل</td><td>مشكلة DNS</td><td><code>nslookup</code> · <code>ipconfig /flushdns</code></td></tr>
+          <tr><td>البورت err-disabled</td><td>مخالفة port security</td><td><code>show port-security interface</code> ثم <code>shutdown</code>/<code>no shutdown</code></td></tr>
+          <tr><td>SSH مرفوض</td><td>لا يوجد RSA key أو <code>transport input</code> خطأ</td><td><code>show ip ssh</code> · <code>show run | section vty</code></td></tr>
+          <tr><td>الشبكة الفرعية غير قابلة للوصول</td><td>subnet mask خطأ أو مسار ناقص</td><td><code>show ip route</code> · <code>show ip interface brief</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cmd-block">
+      <p class="cmd-label">أوامر الاستكشاف الأساسية</p>
+<pre><span class="c">! الحالة العامة</span>
+R1# <span class="p">show ip interface brief</span>
+R1# <span class="p">show interfaces</span> g0/0/0
+R1# <span class="p">show ip route</span>
+R1# <span class="p">show protocols</span>
+R1# <span class="p">show version</span>
+R1# <span class="p">show running-config</span>
+R1# <span class="p">show cdp neighbors detail</span>
+
+<span class="c">! تصفية المخرجات الطويلة</span>
+R1# <span class="p">show running-config | section</span> line vty
+R1# <span class="p">show ip interface brief | include</span> up
+R1# <span class="p">show running-config | begin</span> interface
+
+<span class="c">! الاختبار الفعلي</span>
+R1# <span class="p">ping</span> 192.168.20.10 <span class="p">source</span> g0/0/0
+R1# <span class="p">traceroute</span> 192.168.20.10
+
+<span class="c">! التتبع اللحظي (استخدمه بحذر)</span>
+R1# <span class="p">terminal monitor</span>
+R1# <span class="p">debug ip icmp</span>
+R1# <span class="p">undebug all</span>          <span class="c">! أو no debug all</span></pre>
+    </div>
+
+    <div class="cmd-block">
+      <p class="cmd-label">من جهة الجهاز الطرفي</p>
+<pre>C:\&gt; ipconfig /all
+C:\&gt; ping 127.0.0.1            <span class="c"># هل الـ TCP/IP stack سليم؟</span>
+C:\&gt; ping &lt;my-own-ip&gt;          <span class="c"># هل الـ NIC سليم؟</span>
+C:\&gt; ping &lt;default-gateway&gt;    <span class="c"># هل الشبكة المحلية سليمة؟</span>
+C:\&gt; ping 8.8.8.8              <span class="c"># هل الخروج للإنترنت شغال؟</span>
+C:\&gt; ping google.com           <span class="c"># هل الـ DNS شغال؟</span>
+C:\&gt; tracert google.com
+C:\&gt; arp -a
+C:\&gt; netstat -r</pre>
+    </div>
+
+    <div class="note warnbox">
+      <p class="note-t">قاعدة ذهبية</p>
+      <p>لو الـ ping بالـ IP بيشتغل والـ ping بالاسم بيفشل — المشكلة في الـ <strong>DNS</strong> مش في الشبكة. ولو الاتنين بيفشلوا، ابدأ من الطبقة الأولى: الكابل، الـ <code>no shutdown</code>، ثم الـ IP والـ mask، ثم الـ default gateway، ثم جدول التوجيه.</p>
+    </div>
+  </section>
+
+  <!-- ================= REF ================= -->
+  <section id="ref">
+    <div class="sec-head">
+      <div class="sec-num">08</div>
+      <div>
+        <h2 class="sec-title-en">Quick Reference — أهم الأوامر في صفحة واحدة</h2>
+        <p class="sec-title-ar">مراجعة سريعة قبل الامتحان أو الـ lab</p>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h4>التنقّل بين الأنماط</h4>
+<pre><span class="p">enable</span>
+<span class="p">configure terminal</span>
+<span class="p">interface</span> g0/0/0
+<span class="p">line vty 0 15</span>
+<span class="p">exit</span>   <span class="c">! لمستوى واحد للخلف</span>
+<span class="p">end</span>    <span class="c">! مباشرة لـ privileged</span></pre>
+      </div>
+      <div class="card">
+        <h4>الإعداد الأساسي لأي جهاز</h4>
+<pre><span class="p">hostname</span> R1
+<span class="p">enable secret</span> class
+<span class="p">service password-encryption</span>
+<span class="p">banner motd</span> #Warning!#
+<span class="p">no ip domain-lookup</span>
+<span class="p">copy running-config startup-config</span></pre>
+      </div>
+      <div class="card">
+        <h4>العنونة</h4>
+<pre><span class="p">ip address</span> 10.1.1.1 255.255.255.0
+<span class="p">ipv6 address</span> 2001:db8:1::1/64
+<span class="p">ipv6 address</span> fe80::1 <span class="p">link-local</span>
+<span class="p">ipv6 unicast-routing</span>
+<span class="p">ip default-gateway</span> 10.1.1.254
+<span class="p">no shutdown</span></pre>
+      </div>
+      <div class="card">
+        <h4>أوامر التحقق (show)</h4>
+<pre><span class="p">show ip interface brief</span>
+<span class="p">show ipv6 interface brief</span>
+<span class="p">show ip route</span>
+<span class="p">show interfaces</span>
+<span class="p">show mac address-table</span>
+<span class="p">show running-config</span>
+<span class="p">show version</span>
+<span class="p">show cdp neighbors</span></pre>
+      </div>
+    </div>
+
+    <h3>ملخص الأرقام اللي لازم تحفظها</h3>
+    <div class="t-scroll">
+      <table>
+        <thead><tr><th>البند</th><th class="mono">القيمة</th></tr></thead>
+        <tbody>
+          <tr><td>حجم الـ Ethernet frame</td><td class="mono">64 – 1518 bytes</td></tr>
+          <tr><td>الـ Ethernet payload</td><td class="mono">46 – 1500 bytes</td></tr>
+          <tr><td>طول عنوان MAC</td><td class="mono">48 bit / 12 hex</td></tr>
+          <tr><td>طول عنوان IPv4 / IPv6</td><td class="mono">32 bit / 128 bit</td></tr>
+          <tr><td>حجم TCP / UDP header</td><td class="mono">20 bytes / 8 bytes</td></tr>
+          <tr><td>Well-known ports</td><td class="mono">0 – 1023</td></tr>
+          <tr><td>أقصى مدى لكابل UTP</td><td class="mono">100 m</td></tr>
+          <tr><td>Link-local IPv6 / IPv4</td><td class="mono">fe80::/10 · 169.254.0.0/16</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <p>مبني على الـ course objectives السبعة لمادة <span class="term">CCNA v7 — Introduction to Networks</span>. الأوامر بصيغة Cisco IOS وقابلة للتطبيق مباشرة في Packet Tracer.</p>
+  </footer>
+
+  </main>
+</div>
+</div>
