@@ -95,14 +95,14 @@ test('POST requests require a valid CSRF token', async () => {
   await client.get('/requests/new');
   const goodToken = client.csrf;
   client.csrf = 'forged-token';
-  let res = await client.request('POST', '/requests', { form: { _csrf: 'forged-token', category: 'Plumbing', title: 'Leaking tap in the bathroom', description: 'Drips constantly.', address: '12 Cedar Lane' } });
+  let res = await client.request('POST', '/requests', { form: { _csrf: 'forged-token', category: 'plumbing', title: 'Leaking tap in the bathroom', description: 'Drips constantly.', address: '12 Cedar Lane' } });
   assert.equal(res.status, 403);
   assert.match(res.text, /security token/);
   client.csrf = null; // the error page carries the real token; drop it so the next request has none
-  res = await client.request('POST', '/requests', { form: { category: 'Plumbing', title: 'Leaking tap in the bathroom', description: 'Drips constantly.', address: '12 Cedar Lane' } });
+  res = await client.request('POST', '/requests', { form: { category: 'plumbing', title: 'Leaking tap in the bathroom', description: 'Drips constantly.', address: '12 Cedar Lane' } });
   assert.equal(res.status, 403, 'missing token');
   client.csrf = goodToken;
-  res = await client.post('/requests', { category: 'Plumbing', title: 'Leaking tap in the bathroom', description: 'Drips constantly.', address: '12 Cedar Lane' });
+  res = await client.post('/requests', { category: 'plumbing', title: 'Leaking tap in the bathroom', description: 'Drips constantly.', address: '12 Cedar Lane' });
   assert.equal(res.status, 303);
 });
 

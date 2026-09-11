@@ -9,6 +9,8 @@ A complete web application for running a home maintenance service:
 
 Every step is written to an activity log on the request, so all three parties always see what happened and what comes next.
 
+The interface is available in **English and Arabic** (right-to-left), switchable from the header.
+
 Built with Node.js only (no npm dependencies): `node:http` for the server, the built-in `node:sqlite` module for storage, scrypt password hashing, server-rendered HTML with a small stylesheet, and the built-in test runner.
 
 ## Quick start
@@ -63,6 +65,17 @@ Technician accounts created through the public registration form are **pending**
 | Admin | `/admin`, `/admin/requests/:id`, `/admin/users` | Dashboard with status filters and search; schedule visits and record findings; approve/manage technicians |
 | Technician | `/tech`, `/tech/requests/:id` | Open requests, own offers and jobs; send offers; mark work completed |
 
+## Languages
+
+The whole interface, including validation messages, notifications and the activity log, is available in English and Arabic. Arabic pages render right-to-left with locale-aware dates and prices.
+
+- The header shows a link to the other language. It sets a one-year `hf_lang` cookie, so the choice sticks across visits.
+- `?lang=ar` or `?lang=en` on any URL switches the language (and is then removed from the URL).
+- Without a cookie, the browser's `Accept-Language` header decides; otherwise `DEFAULT_LOCALE` applies.
+- Activity-log entries are stored as structured data and rendered in the reader's language, so a request submitted in English reads naturally in Arabic and vice versa.
+
+Translations live in `src/i18n/en.js` and `src/i18n/ar.js`, which share one key structure (a test fails if a key is missing in either file). Adding a language means adding a dictionary and registering it in `src/i18n/index.js`.
+
 ## Configuration
 
 All settings are environment variables with sensible defaults.
@@ -73,6 +86,7 @@ All settings are environment variables with sensible defaults.
 | `DATABASE_FILE` | `data/homefix.db` | SQLite file (`:memory:` for a throwaway database) |
 | `APP_NAME` | `HomeFix` | Site name shown in the header and titles |
 | `CURRENCY` | `USD` | ISO currency code used to format offer prices |
+| `DEFAULT_LOCALE` | `en` | Language used when neither a cookie nor the browser asks for one (`en` or `ar`) |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NAME` | `admin@homefix.test`, `admin123`, `Site Admin` | Initial admin account, created only when no admin exists yet |
 | `COOKIE_SECURE` | unset | Set to `1` when serving over HTTPS so session cookies get the `Secure` flag |
 | `LOG_REQUESTS` | `1` | Set to `0` to silence the per-request log line |
@@ -86,6 +100,7 @@ src/
   db.js              SQLite schema and transactions
   auth.js            password hashing, sessions, CSRF, role guards
   workflow.js        statuses, transitions, categories, urgency levels
+  i18n/              translation engine, English and Arabic dictionaries, activity-log rendering
   lib/               http toolkit (router, cookies, body parsing, static files), html templating, formatting
   services/          business logic: users, requests (state transitions), offers
   routes/            HTTP handlers per role: auth, customer, admin, tech

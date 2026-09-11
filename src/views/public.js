@@ -4,146 +4,131 @@ import { csrfField, errorSummary, field } from './components.js';
 import { CATEGORIES } from '../workflow.js';
 import { homePathFor } from '../auth.js';
 
-const STEP_CARDS = [
-  {
-    title: 'Submit a request',
-    text: 'Describe the problem, add the property address and how urgent it is. It takes two minutes.',
-  },
-  {
-    title: 'Inspection visit',
-    text: 'Our admin team schedules a visit, inspects the issue on site and records the scope of work.',
-  },
-  {
-    title: 'Compare technician offers',
-    text: 'Vetted technicians send priced offers with a time estimate. You pick the one you prefer.',
-  },
-  {
-    title: 'Work done & confirmed',
-    text: 'The technician completes the job, you confirm it, rate the service and the order closes.',
-  },
-];
+const DEMO_TONES = ['neutral', 'info', 'accent', 'warn', 'ok'];
 
 export function homePage(ctx) {
-  const { user } = ctx;
+  const { user, t } = ctx;
   const primaryHref = user ? (user.role === 'customer' ? '/requests/new' : homePathFor(user)) : '/register';
-  const primaryLabel = user ? (user.role === 'customer' ? 'Submit a new request' : 'Go to your dashboard') : 'Request a service';
+  const primaryLabel = user ? (user.role === 'customer' ? t('home.submitNew') : t('home.goToDashboard')) : t('home.requestService');
+  const demoRows = t('home.demo');
   const body = html`
     <section class="hero">
       <div class="hero-copy">
-        <p class="eyebrow">Home maintenance services</p>
-        <h1>Home repairs, handled end to end.</h1>
-        <p class="lead">Submit a maintenance request, get an inspection visit from our team, compare offers from vetted technicians and track the job until it is done.</p>
+        <p class="eyebrow">${t('home.eyebrow')}</p>
+        <h1>${t('home.title')}</h1>
+        <p class="lead">${t('home.lead')}</p>
         <div class="hero-actions">
           <a class="btn btn-primary btn-lg" href="${primaryHref}">${primaryLabel}</a>
-          ${user ? '' : html`<a class="btn btn-secondary btn-lg" href="/login">Log in</a>`}
+          ${user ? '' : html`<a class="btn btn-secondary btn-lg" href="/login">${t('home.login')}</a>`}
         </div>
       </div>
       <div class="hero-panel" aria-hidden="true">
         <div class="hero-card">
-          <div class="hero-card-row"><span class="badge badge-neutral">Submitted</span><span>Kitchen sink leaking</span></div>
-          <div class="hero-card-row"><span class="badge badge-info">Visit scheduled</span><span>AC not cooling</span></div>
-          <div class="hero-card-row"><span class="badge badge-accent">Open for offers</span><span>Bathroom lights · 2 offers</span></div>
-          <div class="hero-card-row"><span class="badge badge-warn">In progress</span><span>Repaint living room</span></div>
-          <div class="hero-card-row"><span class="badge badge-ok">Closed</span><span>Door hinge · ★★★★★</span></div>
+          ${demoRows.map((text, index) => html`<div class="hero-card-row"><span class="badge badge-${DEMO_TONES[index] ?? 'neutral'}">${t(`status.${['submitted', 'visit_scheduled', 'open_for_offers', 'in_progress', 'closed'][index]}`)}</span><span>${text}</span></div>`)}
         </div>
       </div>
     </section>
 
     <section id="how-it-works" class="section">
-      <h2>How it works</h2>
+      <h2>${t('home.howItWorks')}</h2>
       <ol class="how-grid">
-        ${STEP_CARDS.map((step, index) => html`<li class="how-card"><span class="how-number">${index + 1}</span><h3>${step.title}</h3><p>${step.text}</p></li>`)}
+        ${t('home.steps').map((step, index) => html`<li class="how-card"><span class="how-number">${index + 1}</span><h3>${step.title}</h3><p>${step.text}</p></li>`)}
       </ol>
     </section>
 
     <section class="section">
-      <h2>Services we cover</h2>
-      <ul class="chips">${CATEGORIES.map((category) => html`<li class="chip">${category}</li>`)}</ul>
+      <h2>${t('home.services')}</h2>
+      <ul class="chips">${CATEGORIES.map((category) => html`<li class="chip">${t(`categories.${category}`)}</li>`)}</ul>
     </section>
 
     <section class="section split">
       <div class="card">
-        <h2>For homeowners</h2>
-        <p>One place to report issues, follow the inspection, choose an offer and confirm the finished work. Every step is logged so you always know what happens next.</p>
-        <a class="btn btn-primary" href="${user?.role === 'customer' ? '/requests' : '/register'}">${user?.role === 'customer' ? 'View my requests' : 'Create a customer account'}</a>
+        <h2>${t('home.forHomeowners.title')}</h2>
+        <p>${t('home.forHomeowners.text')}</p>
+        <a class="btn btn-primary" href="${user?.role === 'customer' ? '/requests' : '/register'}">${user?.role === 'customer' ? t('home.forHomeowners.ctaLoggedIn') : t('home.forHomeowners.cta')}</a>
       </div>
       <div class="card">
-        <h2>For technicians</h2>
-        <p>Browse inspected jobs with a clear scope of work, send your price and time estimate, and get assigned when the customer accepts. Ratings build your reputation.</p>
-        <a class="btn btn-secondary" href="${user?.role === 'technician' ? '/tech' : '/register?role=technician'}">${user?.role === 'technician' ? 'Open technician dashboard' : 'Join as a technician'}</a>
+        <h2>${t('home.forTechnicians.title')}</h2>
+        <p>${t('home.forTechnicians.text')}</p>
+        <a class="btn btn-secondary" href="${user?.role === 'technician' ? '/tech' : '/register?role=technician'}">${user?.role === 'technician' ? t('home.forTechnicians.ctaLoggedIn') : t('home.forTechnicians.cta')}</a>
       </div>
     </section>`;
   return page(ctx, { title: '', body, activeNav: 'home' });
 }
 
 export function loginPage(ctx, { values = {}, error = '', next = '' } = {}) {
+  const t = ctx.t;
   const body = html`
     <section class="auth-card card">
-      <h1>Log in</h1>
-      <p class="muted">Welcome back. Sign in to manage your maintenance requests.</p>
+      <h1>${t('auth.loginTitle')}</h1>
+      <p class="muted">${t('auth.loginIntro')}</p>
       ${error ? html`<div class="flash flash-error" role="alert">${error}</div>` : ''}
       <form method="post" action="/login" class="stack">
         ${csrfField(ctx)}
         ${next ? html`<input type="hidden" name="next" value="${next}">` : ''}
-        ${field({ label: 'Email', name: 'email', type: 'email', value: values.email ?? '', required: true, autocomplete: 'email', autofocus: true })}
-        ${field({ label: 'Password', name: 'password', type: 'password', required: true, autocomplete: 'current-password' })}
-        <button type="submit" class="btn btn-primary">Log in</button>
+        ${field({ label: t('auth.email'), name: 'email', type: 'email', value: values.email ?? '', required: true, autocomplete: 'email', autofocus: true })}
+        ${field({ label: t('auth.password'), name: 'password', type: 'password', required: true, autocomplete: 'current-password' })}
+        <button type="submit" class="btn btn-primary">${t('auth.loginButton')}</button>
       </form>
-      <p class="muted">No account yet? <a href="/register">Create one</a>.</p>
+      <p class="muted">${t('auth.noAccount')} <a href="/register">${t('auth.createOne')}</a>.</p>
     </section>`;
-  return page(ctx, { title: 'Log in', body, activeNav: 'login' });
+  return page(ctx, { title: t('auth.loginTitle'), body, activeNav: 'login' });
 }
 
 export function registerPage(ctx, { values = {}, errors = {} } = {}) {
+  const t = ctx.t;
   const role = values.role === 'technician' ? 'technician' : 'customer';
   const body = html`
     <section class="auth-card card">
-      <h1>Create your account</h1>
-      <p class="muted">Customers can submit requests right away. Technician accounts are reviewed by our team before they can send offers.</p>
-      ${errorSummary(errors)}
+      <h1>${t('auth.registerTitle')}</h1>
+      <p class="muted">${t('auth.registerIntro')}</p>
+      ${errorSummary(ctx, errors)}
       <form method="post" action="/register" class="stack" data-register-form>
         ${csrfField(ctx)}
         <fieldset class="field">
-          <legend>I am a</legend>
+          <legend>${t('auth.iAm')}</legend>
           <div class="radio-row">
-            <label class="radio"><input type="radio" name="role" value="customer"${role === 'customer' ? ' checked' : ''}> Homeowner / customer</label>
-            <label class="radio"><input type="radio" name="role" value="technician"${role === 'technician' ? ' checked' : ''}> Technician</label>
+            <label class="radio"><input type="radio" name="role" value="customer"${role === 'customer' ? ' checked' : ''}> ${t('auth.roleCustomer')}</label>
+            <label class="radio"><input type="radio" name="role" value="technician"${role === 'technician' ? ' checked' : ''}> ${t('auth.roleTechnician')}</label>
           </div>
         </fieldset>
-        ${field({ label: 'Full name', name: 'name', value: values.name ?? '', required: true, error: errors.name, autocomplete: 'name' })}
-        ${field({ label: 'Email', name: 'email', type: 'email', value: values.email ?? '', required: true, error: errors.email, autocomplete: 'email' })}
-        ${field({ label: 'Phone', name: 'phone', type: 'tel', value: values.phone ?? '', error: errors.phone, autocomplete: 'tel', hint: 'Used to coordinate visits and work.' })}
+        ${field({ label: t('auth.fullName'), name: 'name', value: values.name ?? '', required: true, error: errors.name, autocomplete: 'name' })}
+        ${field({ label: t('auth.email'), name: 'email', type: 'email', value: values.email ?? '', required: true, error: errors.email, autocomplete: 'email' })}
+        ${field({ label: t('auth.phone'), name: 'phone', type: 'tel', value: values.phone ?? '', error: errors.phone, autocomplete: 'tel', hint: t('auth.phoneHint') })}
         <div data-technician-only${role === 'technician' ? '' : ' hidden'}>
-          ${field({ label: 'Specialty', name: 'specialty', value: values.specialty ?? '', error: errors.specialty, placeholder: 'e.g. Plumbing, Electrical, Air conditioning', hint: 'Technicians only.' })}
+          ${field({ label: t('auth.specialty'), name: 'specialty', value: values.specialty ?? '', error: errors.specialty, placeholder: t('auth.specialtyPlaceholder'), hint: t('auth.specialtyHint') })}
         </div>
-        ${field({ label: 'Password', name: 'password', type: 'password', required: true, error: errors.password, autocomplete: 'new-password', hint: 'At least 8 characters.' })}
-        ${field({ label: 'Confirm password', name: 'password_confirm', type: 'password', required: true, error: errors.password_confirm, autocomplete: 'new-password' })}
-        <button type="submit" class="btn btn-primary">Create account</button>
+        ${field({ label: t('auth.password'), name: 'password', type: 'password', required: true, error: errors.password, autocomplete: 'new-password', hint: t('auth.passwordHint') })}
+        ${field({ label: t('auth.confirmPassword'), name: 'password_confirm', type: 'password', required: true, error: errors.password_confirm, autocomplete: 'new-password' })}
+        <button type="submit" class="btn btn-primary">${t('auth.createAccount')}</button>
       </form>
-      <p class="muted">Already registered? <a href="/login">Log in</a>.</p>
+      <p class="muted">${t('auth.alreadyRegistered')} <a href="/login">${t('auth.loginLink')}</a>.</p>
     </section>`;
-  return page(ctx, { title: 'Register', body, activeNav: 'register' });
+  return page(ctx, { title: t('auth.registerTitle'), body, activeNav: 'register' });
 }
 
 export function errorPage(ctx, { status, message }) {
-  const titles = { 400: 'Bad request', 403: 'Not allowed', 404: 'Page not found', 405: 'Not allowed', 409: 'Action not available', 413: 'Too large', 500: 'Something went wrong' };
+  const t = ctx.t;
+  const titleKey = `errors.titles.${status}`;
+  const title = t(titleKey) === titleKey ? t('errors.generic') : t(titleKey);
   const body = html`
     <section class="card error-card">
-      <p class="eyebrow">Error ${status}</p>
-      <h1>${titles[status] ?? 'Error'}</h1>
+      <p class="eyebrow">${t('errors.errorLabel', { status })}</p>
+      <h1>${title}</h1>
       <p>${message}</p>
-      <p><a class="btn btn-secondary" href="${homePathFor(ctx.user)}">${ctx.user ? 'Back to your dashboard' : 'Back to home'}</a></p>
+      <p><a class="btn btn-secondary" href="${homePathFor(ctx.user)}">${ctx.user ? t('errors.backDashboard') : t('errors.backHome')}</a></p>
     </section>`;
-  return page(ctx, { title: titles[status] ?? 'Error', body });
+  return page(ctx, { title, body });
 }
 
 export function pendingApprovalPage(ctx) {
+  const t = ctx.t;
   const body = html`
     <section class="card auth-card">
-      <p class="eyebrow">Technician account</p>
-      <h1>Your account is awaiting approval</h1>
-      <p>Thanks for joining, ${ctx.user.name}. Our team reviews every technician profile before it can see open requests and send offers. You will be able to use the dashboard as soon as an administrator approves your account.</p>
-      <p class="muted">Registered specialty: <strong>${ctx.user.specialty || '—'}</strong>. Contact support if you need to change it.</p>
+      <p class="eyebrow">${t('auth.pendingEyebrow')}</p>
+      <h1>${t('auth.pendingTitle')}</h1>
+      <p>${t('auth.pendingText', { name: ctx.user.name })}</p>
+      <p class="muted">${t('auth.pendingSpecialty')} <strong>${ctx.user.specialty || '—'}</strong>. ${t('auth.pendingContact')}</p>
     </section>`;
-  return page(ctx, { title: 'Awaiting approval', body, activeNav: 'tech' });
+  return page(ctx, { title: t('auth.pendingTitle'), body, activeNav: 'tech' });
 }

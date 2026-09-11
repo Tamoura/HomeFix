@@ -80,7 +80,7 @@ const fresh = (id) => getRequest(db, id);
 
 // 1. Just submitted — waiting for the admin to schedule a visit.
 const r1 = createRequest(db, nadia, {
-  category: 'Plumbing',
+  category: 'plumbing',
   title: 'Kitchen sink leaking under the cabinet',
   description: 'Water pools under the sink every time we use it. The leak seems to come from the drain connection, not the tap. Started three days ago.',
   address: '12 Cedar Lane, Apt 4B, Springfield',
@@ -91,7 +91,7 @@ backdate(r1, 1);
 
 // 2. Visit scheduled for tomorrow.
 const r2 = createRequest(db, youssef, {
-  category: 'Air conditioning',
+  category: 'air_conditioning',
   title: 'AC not cooling in the master bedroom',
   description: 'The split unit runs but only blows warm air. Filter was cleaned last month. Remote shows no error codes.',
   address: '88 Palm Avenue, Villa 6, Springfield',
@@ -103,7 +103,7 @@ backdate(r2, 2);
 
 // 3. Inspected and open for offers, with two offers to compare.
 const r3 = createRequest(db, nadia, {
-  category: 'Electrical',
+  category: 'electrical',
   title: 'Replace bathroom light fixtures and a faulty switch',
   description: 'Two ceiling fixtures flicker and the switch by the door sparks occasionally. Would like modern LED fixtures.',
   address: '12 Cedar Lane, Apt 4B, Springfield',
@@ -120,7 +120,7 @@ backdate(r3, 5);
 
 // 4. Offer accepted — work in progress.
 const r4 = createRequest(db, youssef, {
-  category: 'Painting',
+  category: 'painting',
   title: 'Repaint living room walls (approx. 45 m²)',
   description: 'Walls have scuffs and a few hairline cracks. Looking for a light grey finish; ceiling does not need painting.',
   address: '88 Palm Avenue, Villa 6, Springfield',
@@ -138,7 +138,7 @@ backdate(r4, 6);
 
 // 5. Technician finished — waiting for the customer to confirm.
 const r5 = createRequest(db, nadia, {
-  category: 'Plumbing',
+  category: 'plumbing',
   title: 'Water heater replacement',
   description: 'The 50 L electric heater is 12 years old and now trips the breaker. Would like a like-for-like replacement.',
   address: '12 Cedar Lane, Apt 4B, Springfield',
@@ -155,7 +155,7 @@ backdate(r5, 9);
 
 // 6. Closed with a rating.
 const r6 = createRequest(db, youssef, {
-  category: 'Carpentry',
+  category: 'carpentry',
   title: 'Fix broken front door hinge',
   description: 'The top hinge of the front door has pulled out of the frame and the door scrapes the floor.',
   address: '88 Palm Avenue, Villa 6, Springfield',
@@ -173,7 +173,7 @@ backdate(r6, 15);
 
 // 7. Cancelled by the customer.
 const r7 = createRequest(db, nadia, {
-  category: 'Pest control',
+  category: 'pest_control',
   title: 'Ants in the garden and kitchen',
   description: 'Trail of ants coming in through the kitchen window every morning.',
   address: '12 Cedar Lane, Apt 4B, Springfield',
@@ -185,7 +185,7 @@ backdate(r7, 4);
 
 // 8. Open for offers with no offers yet — something for technicians to bid on.
 const r8 = createRequest(db, youssef, {
-  category: 'Appliance repair',
+  category: 'appliance_repair',
   title: 'Washing machine not draining',
   description: 'Front loader stops with water inside at the end of the cycle. Pump filter has been cleaned.',
   address: '88 Palm Avenue, Villa 6, Springfield',

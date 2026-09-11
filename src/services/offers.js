@@ -1,7 +1,6 @@
 import { HttpError, ValidationError } from '../lib/http.js';
 import { now, transaction } from '../db.js';
 import { STATUS, can } from '../workflow.js';
-import { formatMoney } from '../lib/format.js';
 import { addEvent } from './requests.js';
 
 const MAX_AMOUNT = 10_000_000;
@@ -37,14 +36,14 @@ export function parseAmount(value) {
 }
 
 export function submitOffer(db, request, technician, input, currency) {
-  if (!can.submitOffer(request)) throw new HttpError(409, 'This request is not open for offers.');
+  if (!can.submitOffer(request)) throw new HttpError(409, 'errors.notOpenForOffers');
   const amountCents = parseAmount(input.amount);
   const duration = String(input.duration || '').trim();
   const note = String(input.note || '').trim();
   const errors = {};
-  if (amountCents === null) errors.amount = 'Enter a valid price greater than zero (up to two decimals).';
-  if (duration.length < 1 || duration.length > 60) errors.duration = 'Give an estimated duration (for example "2 days").';
-  if (note.length > 2000) errors.note = 'The note is too long.';
+  if (amountCents === null) errors.amount = 'errors.validation.amount';
+  if (duration.length < 1 || duration.length > 60) errors.duration = 'errors.validation.duration';
+  if (note.length > 2000) errors.note = 'errors.validation.note';
   if (Object.keys(errors).length) throw new ValidationError(errors);
 
   const existing = getTechnicianOffer(db, request.id, technician.id);
@@ -59,7 +58,7 @@ export function submitOffer(db, request, technician, input, currency) {
         existing.id,
       );
       const verb = existing.status === 'withdrawn' ? 'submitted' : 'updated';
-      addEvent(db, request.id, technician.id, `offer_${verb}`, `${technician.name} ${verb} an offer of ${formatMoney(amountCents, currency)} (${duration}).`);
+      addEvent(db, request.id, technician.id, `offer_${verb}`, { actor: technician.name, amountCents, duration, currency });
       return existing.id;
     }
     const result = db
@@ -67,17 +66,17 @@ export function submitOffer(db, request, technician, input, currency) {
         "INSERT INTO offers (request_id, technician_id, amount_cents, duration, note, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'pending', ?, ?)",
       )
       .run(request.id, technician.id, amountCents, duration, note, timestamp, timestamp);
-    addEvent(db, request.id, technician.id, 'offer_submitted', `${technician.name} submitted an offer of ${formatMoney(amountCents, currency)} (${duration}).`);
+    addEvent(db, request.id, technician.id, 'offer_submitted', { actor: technician.name, amountCents, duration, currency });
     return Number(result.lastInsertRowid);
   });
 }
 
 export function withdrawOffer(db, request, technician) {
   const existing = getTechnicianOffer(db, request.id, technician.id);
-  if (!existing || existing.status !== 'pending') throw new HttpError(409, 'There is no pending offer to withdraw.');
+  if (!existing || existing.status !== 'pending') throw new HttpError(409, 'errors.noPendingOffer');
   transaction(db, () => {
     db.prepare("UPDATE offers SET status = 'withdrawn', updated_at = ? WHERE id = ?").run(now(), existing.id);
-    addEvent(db, request.id, technician.id, 'offer_withdrawn', `${technician.name} withdrew their offer.`);
+    addEvent(db, request.id, technician.id, 'offer_withdrawn', { actor: technician.name });
   });
 }
 

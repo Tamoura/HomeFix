@@ -1,24 +1,25 @@
 import { HttpError, ValidationError } from '../lib/http.js';
 
 // Runs a state-changing action for a form submission.
-//  - success: flash + redirect back
-//  - validation error: re-render the page with field errors (HTTP 400)
+//  - success: flash (a translation key, or [key, params]) + redirect back
+//  - validation error: re-render the page with translated field errors (HTTP 400)
 //  - workflow conflict (409): flash the reason and redirect back
-export function performAction(ctx, { backTo, action, successMessage, onInvalid }) {
+export function performAction(ctx, { backTo, action, success, onInvalid }) {
+  const target = (result) => (typeof backTo === 'function' ? backTo(result) : backTo);
   try {
     const result = action();
-    if (successMessage) {
-      ctx.flash('success', typeof successMessage === 'function' ? successMessage(result) : successMessage);
-    }
-    return ctx.redirect(typeof backTo === 'function' ? backTo(result) : backTo);
+    const message = typeof success === 'function' ? success(result) : success;
+    if (Array.isArray(message)) ctx.flash('success', message[0], message[1]);
+    else if (message) ctx.flash('success', message);
+    return ctx.redirect(target(result));
   } catch (error) {
     if (error instanceof ValidationError) {
-      if (onInvalid) return onInvalid(error.errors);
-      throw new HttpError(400, error.message);
+      if (onInvalid) return onInvalid(ctx.tErrors(error.errors));
+      throw new HttpError(400, 'errors.validationGeneric');
     }
     if (error instanceof HttpError && error.status === 409) {
-      ctx.flash('error', error.message);
-      return ctx.redirect(typeof backTo === 'function' ? backTo() : backTo);
+      ctx.flash('error', error.key, error.params);
+      return ctx.redirect(target());
     }
     throw error;
   }

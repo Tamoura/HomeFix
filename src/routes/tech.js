@@ -19,14 +19,12 @@ function activeTechnicianOnly(ctx) {
     ctx.html(pendingApprovalPage(ctx));
     return;
   }
-  throw new HttpError(403, 'Your technician account is awaiting approval, so you cannot send offers yet.');
+  throw new HttpError(403, 'errors.pendingTechnician');
 }
 
 function loadViewableRequest(ctx) {
   const request = getRequestOr404(ctx.db, ctx.params.id);
-  if (!technicianCanView(ctx.db, request, ctx.user.id)) {
-    throw new HttpError(404, 'We could not find that maintenance request.');
-  }
+  if (!technicianCanView(ctx.db, request, ctx.user.id)) throw new HttpError(404, 'errors.requestNotFound');
   return request;
 }
 
@@ -54,7 +52,7 @@ export function registerTechRoutes(router) {
     const request = loadViewableRequest(ctx);
     return performAction(ctx, {
       action: () => submitOffer(ctx.db, request, ctx.user, ctx.body, ctx.config.currency),
-      successMessage: 'Your offer was sent to the customer.',
+      success: 'flash.offerSent',
       backTo: `/tech/requests/${request.id}`,
       onInvalid: (errors) => renderShow(ctx, request, { errors, values: ctx.body }, 400),
     });
@@ -64,7 +62,7 @@ export function registerTechRoutes(router) {
     const request = loadViewableRequest(ctx);
     return performAction(ctx, {
       action: () => withdrawOffer(ctx.db, request, ctx.user),
-      successMessage: 'Your offer was withdrawn.',
+      success: 'flash.offerWithdrawn',
       backTo: `/tech/requests/${request.id}`,
     });
   });
@@ -73,7 +71,7 @@ export function registerTechRoutes(router) {
     const request = loadViewableRequest(ctx);
     return performAction(ctx, {
       action: () => completeWork(ctx.db, request, ctx.user, ctx.body),
-      successMessage: 'Great work! The customer has been asked to confirm the completion.',
+      success: 'flash.workCompleted',
       backTo: `/tech/requests/${request.id}`,
       onInvalid: (errors) => renderShow(ctx, request, { errors, values: ctx.body }, 400),
     });

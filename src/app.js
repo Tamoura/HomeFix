@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { HttpError, ValidationError, createContext, createRouter, readBody, serveStatic } from './lib/http.js';
 import { sessionMiddleware } from './auth.js';
+import { localeMiddleware } from './i18n/index.js';
 import { ensureAdmin } from './services/users.js';
 import { errorPage } from './views/public.js';
 import { registerAuthRoutes } from './routes/auth.js';
@@ -24,6 +25,7 @@ export function loadConfig(env = process.env) {
     adminPassword: env.ADMIN_PASSWORD || 'admin123',
     adminName: env.ADMIN_NAME || 'Site Admin',
     logRequests: env.LOG_REQUESTS !== '0',
+    defaultLocale: env.DEFAULT_LOCALE || 'en',
   };
 }
 
@@ -36,7 +38,11 @@ function renderError(ctx, error, log) {
     ctx.res.end();
     return;
   }
-  const message = status >= 500 ? 'An unexpected error occurred. Please try again in a moment.' : error.message;
+  let message;
+  if (status >= 500) message = ctx.t('errors.unexpected');
+  else if (error instanceof HttpError) message = ctx.t(error.key, error.params);
+  else if (error instanceof ValidationError) message = ctx.t('errors.validationGeneric');
+  else message = error.message;
   try {
     ctx.html(errorPage(ctx, { status, message }), status);
   } catch (renderFailure) {
@@ -53,6 +59,7 @@ export function createApp({ db, config, log = console }) {
 
   const router = createRouter();
   router.use(sessionMiddleware());
+  router.use(localeMiddleware());
   registerAuthRoutes(router);
   registerCustomerRoutes(router);
   registerAdminRoutes(router);
@@ -74,7 +81,7 @@ export function createApp({ db, config, log = console }) {
       }
       if (ctx.method === 'POST') ctx.body = await readBody(req);
       await router.dispatch(ctx);
-      if (!res.writableEnded) throw new HttpError(404, 'We could not find that page.');
+      if (!res.writableEnded) throw new HttpError(404, 'errors.notFound');
     } catch (error) {
       renderError(ctx, error, log);
     }

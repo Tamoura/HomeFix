@@ -69,16 +69,40 @@ CREATE TABLE IF NOT EXISTS offers (
 CREATE INDEX IF NOT EXISTS idx_offers_request ON offers(request_id);
 CREATE INDEX IF NOT EXISTS idx_offers_technician ON offers(technician_id);
 
+-- Activity log. "message" is the English rendering kept for reference;
+-- "data" holds the structured details used to render it in any language.
 CREATE TABLE IF NOT EXISTS request_events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   request_id INTEGER NOT NULL REFERENCES requests(id) ON DELETE CASCADE,
   actor_id INTEGER REFERENCES users(id),
   type TEXT NOT NULL,
   message TEXT NOT NULL,
+  data TEXT,
   created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_events_request ON request_events(request_id);
 `;
+
+// Categories were stored as English labels before the interface became bilingual.
+const LEGACY_CATEGORIES = {
+  Plumbing: 'plumbing',
+  Electrical: 'electrical',
+  'Air conditioning': 'air_conditioning',
+  Painting: 'painting',
+  Carpentry: 'carpentry',
+  'Appliance repair': 'appliance_repair',
+  'Roofing & waterproofing': 'roofing',
+  'Pest control': 'pest_control',
+  Cleaning: 'cleaning',
+  'General maintenance': 'general',
+};
+
+function migrate(db) {
+  const columns = db.prepare('PRAGMA table_info(request_events)').all().map((column) => column.name);
+  if (!columns.includes('data')) db.exec('ALTER TABLE request_events ADD COLUMN data TEXT');
+  const rename = db.prepare('UPDATE requests SET category = ? WHERE category = ?');
+  for (const [label, key] of Object.entries(LEGACY_CATEGORIES)) rename.run(key, label);
+}
 
 export function openDatabase(file = ':memory:') {
   if (file !== ':memory:') mkdirSync(path.dirname(path.resolve(file)), { recursive: true });
@@ -87,6 +111,7 @@ export function openDatabase(file = ':memory:') {
   db.exec('PRAGMA busy_timeout = 5000');
   if (file !== ':memory:') db.exec('PRAGMA journal_mode = WAL');
   db.exec(SCHEMA);
+  migrate(db);
   return db;
 }
 

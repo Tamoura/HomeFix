@@ -5,6 +5,7 @@ import { cancelRequest, completeVisit, countByStatus, getRequestOr404, listEvent
 import { listOffersForRequest } from '../services/offers.js';
 import { createUserByAdmin, listCustomers, listTechnicians, setUserStatus } from '../services/users.js';
 import { dashboardPage, requestShowPage, usersPage } from '../views/admin.js';
+import { tref } from '../i18n/index.js';
 import { performAction, pickStatusFilter } from './helpers.js';
 
 const adminOnly = requireRole('admin');
@@ -34,7 +35,7 @@ export function registerAdminRoutes(router) {
     const request = getRequestOr404(ctx.db, ctx.params.id);
     return performAction(ctx, {
       action: () => scheduleVisit(ctx.db, request, ctx.user, ctx.body),
-      successMessage: 'The inspection visit is scheduled. The customer can see it on their request.',
+      success: 'flash.visitScheduled',
       backTo: `/admin/requests/${request.id}`,
       onInvalid: (errors) => renderShow(ctx, request, { errors, values: ctx.body }, 400),
     });
@@ -44,7 +45,7 @@ export function registerAdminRoutes(router) {
     const request = getRequestOr404(ctx.db, ctx.params.id);
     return performAction(ctx, {
       action: () => completeVisit(ctx.db, request, ctx.user, ctx.body),
-      successMessage: 'Inspection recorded. The request is now open for technician offers.',
+      success: 'flash.findingsRecorded',
       backTo: `/admin/requests/${request.id}`,
       onInvalid: (errors) => renderShow(ctx, request, { errors, values: ctx.body }, 400),
     });
@@ -54,7 +55,7 @@ export function registerAdminRoutes(router) {
     const request = getRequestOr404(ctx.db, ctx.params.id);
     return performAction(ctx, {
       action: () => cancelRequest(ctx.db, request, ctx.user, ctx.body),
-      successMessage: 'The request was cancelled.',
+      success: 'flash.requestCancelled',
       backTo: `/admin/requests/${request.id}`,
       onInvalid: (errors) => renderShow(ctx, request, { errors, values: ctx.body }, 400),
     });
@@ -65,10 +66,10 @@ export function registerAdminRoutes(router) {
   router.post('/admin/users', adminOnly, (ctx) => {
     try {
       const user = createUserByAdmin(ctx.db, { ...ctx.body, role: 'technician' });
-      ctx.flash('success', `Technician account created for ${user.name}.`);
+      ctx.flash('success', 'flash.techCreated', { name: user.name });
       return ctx.redirect('/admin/users');
     } catch (error) {
-      if (error instanceof ValidationError) return renderUsers(ctx, { errors: error.errors, values: ctx.body }, 400);
+      if (error instanceof ValidationError) return renderUsers(ctx, { errors: ctx.tErrors(error.errors), values: ctx.body }, 400);
       throw error;
     }
   });
@@ -76,7 +77,7 @@ export function registerAdminRoutes(router) {
   router.post('/admin/users/:id/status', adminOnly, (ctx) =>
     performAction(ctx, {
       action: () => setUserStatus(ctx.db, Number(ctx.params.id), String(ctx.body.status || '')),
-      successMessage: (user) => `${user.name} is now ${user.status}.`,
+      success: (user) => ['flash.userStatus', { name: user.name, status: tref(`userStatus.${user.status}`) }],
       backTo: '/admin/users',
     }),
   );

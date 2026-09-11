@@ -16,10 +16,10 @@ export function registerAuthRoutes(router) {
     const next = safeNextPath(ctx.body.next, '');
     const { user, error } = authenticate(ctx.db, ctx.body.email, ctx.body.password);
     if (!user) {
-      return ctx.html(loginPage(ctx, { values: { email: ctx.body.email ?? '' }, error, next }), 401);
+      return ctx.html(loginPage(ctx, { values: { email: ctx.body.email ?? '' }, error: ctx.t(error), next }), 401);
     }
     signIn(ctx, user.id);
-    ctx.flash('success', `Welcome back, ${user.name}.`);
+    ctx.flash('success', 'flash.welcomeBack', { name: user.name });
     return ctx.redirect(next || homePathFor(user));
   });
 
@@ -33,16 +33,12 @@ export function registerAuthRoutes(router) {
     try {
       const user = registerUser(ctx.db, ctx.body);
       signIn(ctx, user.id);
-      ctx.flash(
-        'success',
-        user.role === 'technician'
-          ? 'Your technician account was created and is awaiting approval.'
-          : `Welcome, ${user.name}! You can submit your first maintenance request now.`,
-      );
+      if (user.role === 'technician') ctx.flash('success', 'flash.techCreatedPending');
+      else ctx.flash('success', 'flash.welcomeNew', { name: user.name });
       return ctx.redirect(homePathFor(user));
     } catch (error) {
       if (error instanceof ValidationError) {
-        return ctx.html(registerPage(ctx, { values: ctx.body, errors: error.errors }), 400);
+        return ctx.html(registerPage(ctx, { values: ctx.body, errors: ctx.tErrors(error.errors) }), 400);
       }
       throw error;
     }
@@ -50,7 +46,7 @@ export function registerAuthRoutes(router) {
 
   router.post('/logout', (ctx) => {
     signOut(ctx);
-    ctx.flash('info', 'You have been logged out.');
+    ctx.flash('info', 'flash.loggedOut');
     return ctx.redirect('/');
   });
 }

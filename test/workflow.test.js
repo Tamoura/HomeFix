@@ -50,13 +50,13 @@ test('full lifecycle: request → inspection visit → offers → work → confi
   assert.match(res.text, /Nothing open right now/);
 
   // Customer submits a request (with a validation failure first).
-  res = await customer.post('/requests', { category: 'Plumbing', title: 'Leak', description: 'short', address: '', urgency: 'high' });
+  res = await customer.post('/requests', { category: 'plumbing', title: 'Leak', description: 'short', address: '', urgency: 'high' });
   assert.equal(res.status, 400);
   assert.match(res.text, /Give the request a short title/);
   assert.match(res.text, /Enter the full address/);
 
   res = await customer.post('/requests', {
-    category: 'Plumbing',
+    category: 'plumbing',
     title: 'Kitchen sink leaking under the cabinet',
     description: 'Water pools under the sink every time we use it.',
     address: '12 Cedar Lane, Apt 4B',
@@ -69,7 +69,7 @@ test('full lifecycle: request → inspection visit → offers → work → confi
   assert.equal(res.status, 200);
   assert.match(res.text, /Your request was submitted/);
   assert.match(res.text, /badge-neutral">Submitted</);
-  assert.match(res.text, /Nadia Khalil submitted a plumbing request/);
+  assert.match(res.text, /Nadia Khalil submitted a new plumbing request/);
   assert.match(res.text, /Cancel request/);
   assert.equal(requestRow(1).status, 'submitted');
 
@@ -232,7 +232,7 @@ test('customers can cancel early, admins can cancel later, and offers get declin
   await admin.login('admin@homefix.test', 'admin123');
   await omar.login('omar@example.com', 'tech1234');
 
-  let res = await customer.post('/requests', { category: 'Painting', title: 'Repaint the hallway walls', description: 'Scuffed walls, light grey finish wanted.', address: '12 Cedar Lane', urgency: 'low' });
+  let res = await customer.post('/requests', { category: 'painting', title: 'Repaint the hallway walls', description: 'Scuffed walls, light grey finish wanted.', address: '12 Cedar Lane', urgency: 'low' });
   const id = Number(res.location.split('/').pop());
   res = await customer.post(`/requests/${id}/cancel`, { reason: 'Found another solution.' });
   assert.equal(res.status, 303);
@@ -244,7 +244,7 @@ test('customers can cancel early, admins can cancel later, and offers get declin
   assert.equal(res.status, 303);
   assert.equal(requestRow(id).status, 'cancelled', 'cancelled requests stay cancelled');
 
-  res = await customer.post('/requests', { category: 'Electrical', title: 'Socket in the kitchen is dead', description: 'The double socket next to the fridge stopped working.', address: '12 Cedar Lane', urgency: 'normal' });
+  res = await customer.post('/requests', { category: 'electrical', title: 'Socket in the kitchen is dead', description: 'The double socket next to the fridge stopped working.', address: '12 Cedar Lane', urgency: 'normal' });
   const second = Number(res.location.split('/').pop());
   await admin.post(`/admin/requests/${second}/visit`, { visit_at: '2030-01-01T10:00' });
   await admin.post(`/admin/requests/${second}/assessment`, { assessment: 'Replace the socket and check the ring circuit.' });
@@ -266,7 +266,7 @@ test('technicians can withdraw and resubmit offers while the request is open', a
   await admin.login('admin@homefix.test', 'admin123');
   await lina.login('lina@example.com', 'tech1234');
 
-  let res = await customer.post('/requests', { category: 'Electrical', title: 'Install a ceiling fan in the bedroom', description: 'Fan purchased already, needs wiring to the existing light point.', address: '12 Cedar Lane', urgency: 'normal' });
+  let res = await customer.post('/requests', { category: 'electrical', title: 'Install a ceiling fan in the bedroom', description: 'Fan purchased already, needs wiring to the existing light point.', address: '12 Cedar Lane', urgency: 'normal' });
   const id = Number(res.location.split('/').pop());
   await admin.post(`/admin/requests/${id}/visit`, { visit_at: '2030-02-01T10:00' });
   await admin.post(`/admin/requests/${id}/assessment`, { assessment: 'Fit the supplied fan to the existing light point; add a wall regulator.' });

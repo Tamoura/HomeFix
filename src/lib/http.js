@@ -4,18 +4,24 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { parseCookies, serializeCookie } from './cookies.js';
+import { createFormatters } from './format.js';
+import { intlTag, localeDir, resolveLocale, translate, translateErrors } from '../i18n/index.js';
 
+// Errors carry a translation key (plus parameters) so they can be shown in the
+// reader's language.
 export class HttpError extends Error {
-  constructor(status, message) {
-    super(message);
+  constructor(status, key, params = {}) {
+    super(key);
     this.name = 'HttpError';
     this.status = status;
+    this.key = key;
+    this.params = params;
   }
 }
 
 export class ValidationError extends Error {
-  constructor(errors, message = 'Please correct the highlighted fields.') {
-    super(message);
+  constructor(errors) {
+    super('errors.validationGeneric');
     this.name = 'ValidationError';
     this.errors = errors;
   }
@@ -29,7 +35,7 @@ export async function readBody(req) {
   let size = 0;
   for await (const chunk of req) {
     size += chunk.length;
-    if (size > MAX_BODY_BYTES) throw new HttpError(413, 'The submitted form is too large.');
+    if (size > MAX_BODY_BYTES) throw new HttpError(413, 'errors.tooLarge');
     chunks.push(chunk);
   }
   const text = Buffer.concat(chunks).toString('utf8');
@@ -40,7 +46,7 @@ export async function readBody(req) {
     try {
       return text ? JSON.parse(text) : {};
     } catch {
-      throw new HttpError(400, 'Malformed JSON body.');
+      throw new HttpError(400, 'errors.malformedJson');
     }
   }
   return {};
@@ -53,7 +59,7 @@ function encodeFlash(payload) {
 function decodeFlash(value) {
   try {
     const parsed = JSON.parse(Buffer.from(value, 'base64url').toString('utf8'));
-    if (parsed && typeof parsed.message === 'string') return parsed;
+    if (parsed && typeof parsed.key === 'string') return parsed;
   } catch {
     // ignore malformed cookie
   }
@@ -64,6 +70,12 @@ export function createContext(req, res, { db, config }) {
   const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   const cookies = parseCookies(req.headers.cookie);
   const outgoingCookies = new Map();
+  const locale = resolveLocale({
+    query: url.searchParams,
+    cookies,
+    acceptLanguage: req.headers['accept-language'],
+    fallback: config.defaultLocale,
+  });
 
   const ctx = {
     req,
@@ -79,6 +91,13 @@ export function createContext(req, res, { db, config }) {
     body: {},
     user: null,
     session: null,
+
+    locale,
+    dir: localeDir(locale),
+    intl: intlTag(locale),
+    t: (key, params) => translate(locale, key, params),
+    tErrors: (errors) => translateErrors(locale, errors),
+    fmt: createFormatters(intlTag(locale), config.currency),
 
     setCookie(name, value, options = {}) {
       outgoingCookies.set(name, serializeCookie(name, value, options));
@@ -98,6 +117,8 @@ export function createContext(req, res, { db, config }) {
       ctx.send(status, String(body), {
         'Content-Type': 'text/html; charset=utf-8',
         'Cache-Control': 'no-store',
+        'Content-Language': locale,
+        Vary: 'Cookie, Accept-Language',
       });
     },
     json(data, status = 200) {
@@ -109,13 +130,17 @@ export function createContext(req, res, { db, config }) {
     redirect(location, status = 303) {
       ctx.send(status, '', { Location: location });
     },
-    flash(type, message) {
-      ctx.setCookie('flash', encodeFlash({ type, message }), { path: '/', httpOnly: true, sameSite: 'Lax' });
+    // Flash messages are stored as translation keys so they render in the
+    // language of the page that displays them.
+    flash(type, key, params = {}) {
+      ctx.setCookie('flash', encodeFlash({ type, key, params }), { path: '/', httpOnly: true, sameSite: 'Lax' });
     },
     takeFlash() {
       if (!cookies.flash) return null;
       ctx.clearCookie('flash', { path: '/' });
-      return decodeFlash(cookies.flash);
+      const payload = decodeFlash(cookies.flash);
+      if (!payload) return null;
+      return { type: payload.type, message: translate(locale, payload.key, payload.params || {}) };
     },
   };
   return ctx;
@@ -177,8 +202,8 @@ export function createRouter() {
         }
         return;
       }
-      if (pathMatched) throw new HttpError(405, 'That action is not allowed on this page.');
-      throw new HttpError(404, 'We could not find that page.');
+      if (pathMatched) throw new HttpError(405, 'errors.methodNotAllowed');
+      throw new HttpError(404, 'errors.notFound');
     },
   };
 }
@@ -191,6 +216,7 @@ const MIME_TYPES = {
   '.jpg': 'image/jpeg',
   '.ico': 'image/x-icon',
   '.txt': 'text/plain; charset=utf-8',
+  '.woff2': 'font/woff2',
 };
 
 export async function serveStatic(ctx, rootDir, urlPrefix) {
@@ -199,15 +225,15 @@ export async function serveStatic(ctx, rootDir, urlPrefix) {
   try {
     relative = decodeURIComponent(relative);
   } catch {
-    throw new HttpError(404, 'File not found.');
+    throw new HttpError(404, 'errors.notFound');
   }
   const file = path.resolve(root, `.${path.posix.normalize(`/${relative}`)}`);
-  if (!file.startsWith(root + path.sep)) throw new HttpError(404, 'File not found.');
+  if (!file.startsWith(root + path.sep)) throw new HttpError(404, 'errors.notFound');
   let data;
   try {
     data = await readFile(file);
   } catch {
-    throw new HttpError(404, 'File not found.');
+    throw new HttpError(404, 'errors.notFound');
   }
   ctx.send(200, data, {
     'Content-Type': MIME_TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream',

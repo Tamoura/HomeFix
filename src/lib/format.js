@@ -1,56 +1,75 @@
-const dateTimeFormatter = new Intl.DateTimeFormat('en', { dateStyle: 'medium', timeStyle: 'short' });
-const dateFormatter = new Intl.DateTimeFormat('en', { dateStyle: 'medium' });
+// Locale-aware formatting. `tag` is a BCP 47 tag such as "en" or "ar-u-nu-latn".
 
-export function formatMoney(cents, currency = 'USD') {
+const DATE_TIME_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' };
+const DATE_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric' };
+
+const cache = new Map();
+function cached(kind, tag, factory) {
+  const key = `${kind}|${tag}`;
+  let formatter = cache.get(key);
+  if (!formatter) {
+    formatter = factory();
+    cache.set(key, formatter);
+  }
+  return formatter;
+}
+
+// Some locales (Arabic among them) prefix the amount with an invisible
+// directional mark; it is dropped so callers control the layout direction.
+const DIRECTION_MARKS = /[\u200e\u200f]/g;
+
+export function formatMoney(cents, currency = 'USD', tag = 'en') {
   if (cents === null || cents === undefined) return '—';
   const amount = Number(cents) / 100;
   try {
-    return new Intl.NumberFormat('en', { style: 'currency', currency }).format(amount);
+    return cached(`money|${currency}`, tag, () => new Intl.NumberFormat(tag, { style: 'currency', currency }))
+      .format(amount)
+      .replace(DIRECTION_MARKS, '');
   } catch {
     return `${amount.toFixed(2)} ${currency}`;
   }
 }
 
+export function formatNumber(value, tag = 'en') {
+  return cached('number', tag, () => new Intl.NumberFormat(tag)).format(Number(value));
+}
+
 // ISO timestamps (UTC) written by the server.
-export function formatDateTime(iso) {
+export function formatDateTime(iso, tag = 'en') {
   if (!iso) return '—';
   const date = new Date(iso);
-  return Number.isNaN(date.getTime()) ? String(iso) : dateTimeFormatter.format(date);
+  if (Number.isNaN(date.getTime())) return String(iso);
+  return cached('datetime', tag, () => new Intl.DateTimeFormat(tag, DATE_TIME_OPTIONS)).format(date);
 }
 
 // Calendar dates in YYYY-MM-DD form.
-export function formatDate(value) {
+export function formatDate(value, tag = 'en') {
   if (!value) return '—';
   const date = new Date(/^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T00:00:00` : value);
-  return Number.isNaN(date.getTime()) ? String(value) : dateFormatter.format(date);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return cached('date', tag, () => new Intl.DateTimeFormat(tag, DATE_OPTIONS)).format(date);
 }
 
 // Wall-clock values from <input type="datetime-local"> (YYYY-MM-DDTHH:MM, no zone).
-export function formatLocalDateTime(value) {
+export function formatLocalDateTime(value, tag = 'en') {
   if (!value) return '—';
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? String(value) : dateTimeFormatter.format(date);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return cached('datetime', tag, () => new Intl.DateTimeFormat(tag, DATE_TIME_OPTIONS)).format(date);
 }
 
-export function relativeTime(iso) {
-  if (!iso) return '';
-  const diff = Date.now() - new Date(iso).getTime();
-  if (Number.isNaN(diff)) return '';
-  const minutes = Math.round(diff / 60000);
-  if (minutes < 1) return 'just now';
-  if (minutes < 60) return `${minutes} min ago`;
-  const hours = Math.round(minutes / 60);
-  if (hours < 24) return `${hours} h ago`;
-  const days = Math.round(hours / 24);
-  if (days < 30) return `${days} d ago`;
-  return formatDate(iso);
+export function createFormatters(tag, currency) {
+  return {
+    tag,
+    money: (cents) => formatMoney(cents, currency, tag),
+    number: (value) => formatNumber(value, tag),
+    dateTime: (iso) => formatDateTime(iso, tag),
+    date: (value) => formatDate(value, tag),
+    localDateTime: (value) => formatLocalDateTime(value, tag),
+  };
 }
 
 export function truncate(text, max = 120) {
   const value = String(text || '');
   return value.length > max ? `${value.slice(0, max - 1).trimEnd()}…` : value;
-}
-
-export function pluralize(count, singular, plural = `${singular}s`) {
-  return `${count} ${count === 1 ? singular : plural}`;
 }

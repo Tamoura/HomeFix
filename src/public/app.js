@@ -23,7 +23,8 @@
   // Render server timestamps in the visitor's own time zone.
   var formatter;
   try {
-    formatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+    var intlTag = document.documentElement.getAttribute('data-intl') || undefined;
+    formatter = new Intl.DateTimeFormat(intlTag, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
   } catch (error) {
     formatter = null;
   }

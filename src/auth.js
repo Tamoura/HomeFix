@@ -111,7 +111,7 @@ export function sessionMiddleware() {
     if (ctx.method === 'POST' && ctx.session) {
       const provided = ctx.body && typeof ctx.body._csrf === 'string' ? ctx.body._csrf : '';
       if (!provided || !safeEqual(provided, ctx.session.csrf)) {
-        throw new HttpError(403, 'Your form session expired or the security token was missing. Please reload the page and try again.');
+        throw new HttpError(403, 'errors.csrf');
       }
     }
   };
@@ -133,7 +133,7 @@ export function safeNextPath(value, fallback) {
 
 export function requireAuth(ctx) {
   if (ctx.user) return;
-  ctx.flash('info', 'Please sign in to continue.');
+  ctx.flash('info', 'errors.signIn');
   ctx.redirect(`/login?next=${encodeURIComponent(ctx.path)}`);
 }
 
@@ -142,7 +142,7 @@ export function requireRole(...roles) {
     requireAuth(ctx);
     if (ctx.res.writableEnded) return;
     if (!roles.includes(ctx.user.role)) {
-      throw new HttpError(403, 'Your account does not have access to that page.');
+      throw new HttpError(403, 'errors.forbiddenPage');
     }
   };
 }

@@ -28,7 +28,7 @@ export function registerCustomerRoutes(router) {
   router.post('/requests', customerOnly, (ctx) =>
     performAction(ctx, {
       action: () => createRequest(ctx.db, ctx.user, ctx.body),
-      successMessage: 'Your request was submitted. Our team will schedule an inspection visit shortly.',
+      success: 'flash.requestSubmitted',
       backTo: (id) => `/requests/${id}`,
       onInvalid: (errors) => ctx.html(requestFormPage(ctx, { values: ctx.body, errors }), 400),
     }),
@@ -43,7 +43,7 @@ export function registerCustomerRoutes(router) {
     const request = getCustomerRequest(ctx.db, ctx.params.id, ctx.user.id);
     return performAction(ctx, {
       action: () => cancelRequest(ctx.db, request, ctx.user, ctx.body),
-      successMessage: 'The request was cancelled.',
+      success: 'flash.requestCancelled',
       backTo: `/requests/${request.id}`,
       onInvalid: (errors) => renderShow(ctx, request, { errors, values: ctx.body }, 400),
     });
@@ -53,7 +53,7 @@ export function registerCustomerRoutes(router) {
     const request = getCustomerRequest(ctx.db, ctx.params.id, ctx.user.id);
     return performAction(ctx, {
       action: () => acceptOffer(ctx.db, request, ctx.user, ctx.params.offerId, ctx.config.currency),
-      successMessage: (offer) => `Offer accepted. ${offer.technician_name} has been assigned to your request.`,
+      success: (offer) => ['flash.offerAccepted', { name: offer.technician_name }],
       backTo: `/requests/${request.id}`,
     });
   });
@@ -62,7 +62,7 @@ export function registerCustomerRoutes(router) {
     const request = getCustomerRequest(ctx.db, ctx.params.id, ctx.user.id);
     return performAction(ctx, {
       action: () => confirmCompletion(ctx.db, request, ctx.user, ctx.body),
-      successMessage: 'Thank you! The order is confirmed and closed.',
+      success: 'flash.orderClosed',
       backTo: `/requests/${request.id}`,
       onInvalid: (errors) => renderShow(ctx, request, { errors, values: ctx.body }, 400),
     });
@@ -72,7 +72,7 @@ export function registerCustomerRoutes(router) {
     const request = getCustomerRequest(ctx.db, ctx.params.id, ctx.user.id);
     return performAction(ctx, {
       action: () => requestRework(ctx.db, request, ctx.user, ctx.body),
-      successMessage: 'The technician has been notified that the work needs attention.',
+      success: 'flash.reworkSent',
       backTo: `/requests/${request.id}`,
       onInvalid: (errors) => renderShow(ctx, request, { errors, values: ctx.body }, 400),
     });
