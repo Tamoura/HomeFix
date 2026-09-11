@@ -192,3 +192,34 @@ test('static files are served and path traversal is blocked', async () => {
   assert.equal(res.status, 404);
   assert.match(res.text, /Page not found/);
 });
+
+test('landing pages render for visitors and logged-in users', async () => {
+  const visitor = new Client(app.base);
+  let res = await visitor.get('/');
+  assert.equal(res.status, 200);
+  assert.match(res.text, /Every home repair, handled by people you can trust\./);
+  assert.match(res.text, /<meta name="description"/);
+  assert.match(res.text, /Why homeowners choose HomeFix/);
+  assert.match(res.text, /Questions homeowners ask/);
+  assert.match(res.text, /Leaks, blocked drains, taps, toilets and water heaters\./);
+  assert.match(res.text, /href="\/technicians"/);
+  assert.match(res.text, /href="\/register"[^>]*>Request a service</);
+  assert.doesNotMatch(res.text, /stats-strip/, 'no track record until a job has been closed');
+
+  res = await visitor.get('/technicians');
+  assert.equal(res.status, 200);
+  assert.match(res.text, /Inspected jobs, clear scope, your price\./);
+  assert.match(res.text, /href="\/register\?role=technician"[^>]*>Join as a technician</);
+
+  const technician = new Client(app.base);
+  await technician.login('karim@example.com', 'tech1234');
+  res = await technician.get('/technicians');
+  assert.match(res.text, /href="\/tech"[^>]*>Go to your dashboard</);
+  assert.doesNotMatch(res.text, /Join as a technician/);
+
+  const customer = new Client(app.base);
+  await customer.login('nadia@example.com', 'customer123');
+  res = await customer.get('/');
+  assert.match(res.text, /href="\/requests\/new"[^>]*>Submit a new request</);
+  assert.doesNotMatch(res.text, /Are you a technician\?/);
+});

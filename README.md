@@ -60,7 +60,7 @@ Technician accounts created through the public registration form are **pending**
 
 | Role | URL | Purpose |
 | --- | --- | --- |
-| Everyone | `/`, `/login`, `/register` | Landing page, sign in, create a customer or technician account |
+| Everyone | `/`, `/technicians`, `/login`, `/register` | Customer landing page (benefits, services, FAQ, live track record), technician recruitment page, sign in, create an account |
 | Customer | `/requests`, `/requests/new`, `/requests/:id` | List, submit and follow requests; accept offers; confirm completion |
 | Admin | `/admin`, `/admin/requests/:id`, `/admin/users` | Dashboard with status filters and search; schedule visits and record findings; approve/manage technicians |
 | Technician | `/tech`, `/tech/requests/:id` | Open requests, own offers and jobs; send offers; mark work completed |

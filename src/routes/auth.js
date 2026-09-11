@@ -1,10 +1,12 @@
 import { homePathFor, safeNextPath, signIn, signOut } from '../auth.js';
 import { ValidationError } from '../lib/http.js';
 import { authenticate, registerUser } from '../services/users.js';
-import { homePage, loginPage, registerPage } from '../views/public.js';
+import { publicStats } from '../services/requests.js';
+import { homePage, loginPage, registerPage, techniciansPage } from '../views/public.js';
 
 export function registerAuthRoutes(router) {
-  router.get('/', (ctx) => ctx.html(homePage(ctx)));
+  router.get('/', (ctx) => ctx.html(homePage(ctx, { stats: publicStats(ctx.db) })));
+  router.get('/technicians', (ctx) => ctx.html(techniciansPage(ctx)));
 
   router.get('/login', (ctx) => {
     if (ctx.user) return ctx.redirect(homePathFor(ctx.user));

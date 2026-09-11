@@ -326,3 +326,42 @@ a.stat:hover { border-color: var(--brand); color: var(--ink); }
 .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
 [dir="auto"] { unicode-bidi: plaintext; }
 .lang-link { font-weight: 600; }
+
+/* Landing pages */
+.hero-single { grid-template-columns: 1fr; }
+.hero-single .hero-copy { max-width: 64ch; }
+.hero .lead { max-width: 56ch; }
+.trust { list-style: none; margin: 1.25rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; color: var(--muted); font-size: 0.95rem; }
+.trust li { display: flex; align-items: center; gap: 0.4rem; }
+.trust li::before { content: "✓"; color: var(--ok); font-weight: 700; }
+.stats-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; padding: 1.25rem; background: var(--brand-soft); border-radius: var(--radius); margin: 0.5rem 0 1rem; }
+.stats-strip div { text-align: center; }
+.stats-strip strong { display: block; font-size: 1.8rem; line-height: 1.1; color: var(--brand-strong); }
+.stats-strip span { color: var(--muted); font-size: 0.9rem; }
+.section-lead { color: var(--muted); max-width: 60ch; margin-top: -0.5rem; margin-bottom: 1rem; }
+.benefit-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; }
+.benefit-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.2rem 1.25rem; box-shadow: var(--shadow); }
+.benefit-card h3 { margin: 0.75rem 0 0.35rem; }
+.benefit-card p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+.benefit-icon { display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--brand-soft); color: var(--brand-strong); }
+.service-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 0.9rem; }
+.service-card { display: flex; gap: 0.85rem; align-items: flex-start; padding: 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.service-icon { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--brand-soft); color: var(--brand-strong); }
+.service-card h3 { margin: 0 0 0.2rem; font-size: 1rem; }
+.service-card p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+.faq { display: flex; flex-direction: column; gap: 0.5rem; max-width: 800px; }
+.faq details { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 0.75rem 1rem; }
+.faq summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; color: var(--muted); font-size: 1.3rem; line-height: 1; flex: none; }
+.faq details[open] summary::after { content: "−"; }
+.faq p { margin: 0.6rem 0 0; color: var(--muted); }
+.cta-band { background: var(--brand); color: var(--brand-ink); border-radius: var(--radius); padding: 2.25rem 1.5rem; text-align: center; margin: 1.5rem 0 1rem; }
+.cta-band h2 { font-size: 1.6rem; margin-bottom: 0.5rem; }
+.cta-band p { opacity: 0.92; max-width: 52ch; margin: 0 auto 1rem; }
+.cta-band .btn-primary { background: var(--surface); color: var(--brand-strong); }
+.cta-band .btn-primary:hover { background: var(--surface-2); color: var(--brand-strong); }
+.cta-band .btn-secondary { background: transparent; color: var(--brand-ink); border-color: var(--brand-ink); }
+.cta-band .cta-login { margin: 1rem 0 0; font-size: 0.95rem; }
+.cta-band a:not(.btn) { color: inherit; text-decoration: underline; }
+.tech-callout { text-align: center; color: var(--muted); padding: 0.25rem 0 1rem; }

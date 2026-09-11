@@ -102,6 +102,17 @@ export function countByStatus(db, { customerId } = {}) {
   return counts;
 }
 
+// Figures shown on the landing page.
+export function publicStats(db) {
+  return db
+    .prepare(
+      `SELECT (SELECT COUNT(*) FROM requests WHERE status = 'closed') AS closed_jobs,
+              (SELECT COUNT(*) FROM users WHERE role = 'technician' AND status = 'active') AS technicians,
+              (SELECT AVG(rating) FROM requests WHERE rating IS NOT NULL) AS avg_rating`,
+    )
+    .get();
+}
+
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
 }

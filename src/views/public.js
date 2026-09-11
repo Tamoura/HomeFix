@@ -1,16 +1,57 @@
 import { html } from '../lib/html.js';
 import { page } from './layout.js';
 import { csrfField, errorSummary, field } from './components.js';
+import { BENEFIT_ICONS, TECH_BENEFIT_ICONS, categoryIcon } from './icons.js';
 import { CATEGORIES } from '../workflow.js';
 import { homePathFor } from '../auth.js';
 
 const DEMO_TONES = ['neutral', 'info', 'accent', 'warn', 'ok'];
+const DEMO_STATUSES = ['submitted', 'visit_scheduled', 'open_for_offers', 'in_progress', 'closed'];
 
-export function homePage(ctx) {
+function demoCard(ctx) {
+  const rows = ctx.t('home.demo');
+  return html`<div class="hero-panel" aria-hidden="true">
+    <div class="hero-card">
+      ${rows.map((text, index) => html`<div class="hero-card-row"><span class="badge badge-${DEMO_TONES[index] ?? 'neutral'}">${ctx.t(`status.${DEMO_STATUSES[index]}`)}</span><span>${text}</span></div>`)}
+    </div>
+  </div>`;
+}
+
+function stepsSection(ctx, id, title, steps) {
+  return html`<section id="${id}" class="section">
+    <h2>${title}</h2>
+    <ol class="how-grid">
+      ${steps.map((step, index) => html`<li class="how-card"><span class="how-number">${index + 1}</span><h3>${step.title}</h3><p>${step.text}</p></li>`)}
+    </ol>
+  </section>`;
+}
+
+function benefitsSection(ctx, title, benefits, icons) {
+  return html`<section class="section">
+    <h2>${title}</h2>
+    <ul class="benefit-grid">
+      ${benefits.map((benefit, index) => html`<li class="benefit-card"><span class="benefit-icon">${icons[index] ?? ''}</span><h3>${benefit.title}</h3><p>${benefit.text}</p></li>`)}
+    </ul>
+  </section>`;
+}
+
+function ctaBand(ctx, { title, text, primary, secondary }) {
+  return html`<section class="cta-band">
+    <h2>${title}</h2>
+    <p>${text}</p>
+    ${primary}
+    ${secondary ? html`<p class="cta-login">${secondary}</p>` : ''}
+  </section>`;
+}
+
+// Customer-facing landing page (the site's front page).
+export function homePage(ctx, { stats } = {}) {
   const { user, t } = ctx;
+  const app = ctx.config.appName;
   const primaryHref = user ? (user.role === 'customer' ? '/requests/new' : homePathFor(user)) : '/register';
   const primaryLabel = user ? (user.role === 'customer' ? t('home.submitNew') : t('home.goToDashboard')) : t('home.requestService');
-  const demoRows = t('home.demo');
+  const primaryButton = html`<a class="btn btn-primary btn-lg" href="${primaryHref}">${primaryLabel}</a>`;
+  const showStats = Boolean(stats && stats.closed_jobs > 0);
   const body = html`
     <section class="hero">
       <div class="hero-copy">
@@ -18,42 +59,71 @@ export function homePage(ctx) {
         <h1>${t('home.title')}</h1>
         <p class="lead">${t('home.lead')}</p>
         <div class="hero-actions">
-          <a class="btn btn-primary btn-lg" href="${primaryHref}">${primaryLabel}</a>
-          ${user ? '' : html`<a class="btn btn-secondary btn-lg" href="/login">${t('home.login')}</a>`}
+          ${primaryButton}
+          <a class="btn btn-secondary btn-lg" href="#how-it-works">${t('home.seeHow')}</a>
         </div>
+        <ul class="trust">${t('home.trust').map((item) => html`<li>${item}</li>`)}</ul>
       </div>
-      <div class="hero-panel" aria-hidden="true">
-        <div class="hero-card">
-          ${demoRows.map((text, index) => html`<div class="hero-card-row"><span class="badge badge-${DEMO_TONES[index] ?? 'neutral'}">${t(`status.${['submitted', 'visit_scheduled', 'open_for_offers', 'in_progress', 'closed'][index]}`)}</span><span>${text}</span></div>`)}
-        </div>
-      </div>
+      ${demoCard(ctx)}
     </section>
 
-    <section id="how-it-works" class="section">
-      <h2>${t('home.howItWorks')}</h2>
-      <ol class="how-grid">
-        ${t('home.steps').map((step, index) => html`<li class="how-card"><span class="how-number">${index + 1}</span><h3>${step.title}</h3><p>${step.text}</p></li>`)}
-      </ol>
+    ${showStats
+      ? html`<section class="stats-strip" aria-label="${t('home.statsLabel')}">
+          <div><strong>${ctx.fmt.number(stats.closed_jobs)}</strong><span>${t('home.stats.jobs')}</span></div>
+          <div><strong>${ctx.fmt.number(stats.technicians)}</strong><span>${t('home.stats.technicians')}</span></div>
+          ${stats.avg_rating ? html`<div><strong>★ ${Number(stats.avg_rating).toFixed(1)}</strong><span>${t('home.stats.rating')}</span></div>` : ''}
+        </section>`
+      : ''}
+
+    ${benefitsSection(ctx, t('home.whyTitle', { app }), t('home.benefits'), BENEFIT_ICONS)}
+    ${stepsSection(ctx, 'how-it-works', t('home.howItWorks'), t('home.steps'))}
+
+    <section id="services" class="section">
+      <h2>${t('home.services')}</h2>
+      <p class="section-lead">${t('home.servicesLead')}</p>
+      <ul class="service-grid">
+        ${CATEGORIES.map((key) => html`<li class="service-card"><span class="service-icon">${categoryIcon(key)}</span><div><h3>${t(`categories.${key}`)}</h3><p>${t(`services.${key}`)}</p></div></li>`)}
+      </ul>
     </section>
 
     <section class="section">
-      <h2>${t('home.services')}</h2>
-      <ul class="chips">${CATEGORIES.map((category) => html`<li class="chip">${t(`categories.${category}`)}</li>`)}</ul>
+      <h2>${t('home.faqTitle')}</h2>
+      <div class="faq">
+        ${t('home.faq').map((item) => html`<details><summary>${item.q}</summary><p>${item.a}</p></details>`)}
+      </div>
     </section>
 
-    <section class="section split">
-      <div class="card">
-        <h2>${t('home.forHomeowners.title')}</h2>
-        <p>${t('home.forHomeowners.text')}</p>
-        <a class="btn btn-primary" href="${user?.role === 'customer' ? '/requests' : '/register'}">${user?.role === 'customer' ? t('home.forHomeowners.ctaLoggedIn') : t('home.forHomeowners.cta')}</a>
+    ${ctaBand(ctx, {
+      title: t('home.ctaTitle'),
+      text: t('home.ctaText'),
+      primary: primaryButton,
+      secondary: user ? '' : html`${t('home.ctaLogin')} <a href="/login">${t('nav.login')}</a>`,
+    })}
+    ${user ? '' : html`<p class="tech-callout">${t('home.techCallout')} <a href="/technicians">${t('home.techCalloutLink', { app })}</a></p>`}`;
+  return page(ctx, { title: '', description: t('home.metaDescription'), body, activeNav: 'home', wide: true });
+}
+
+// Recruitment page for technicians.
+export function techniciansPage(ctx) {
+  const { user, t } = ctx;
+  const app = ctx.config.appName;
+  let actions;
+  if (user?.role === 'technician') actions = html`<a class="btn btn-primary btn-lg" href="/tech">${t('home.goToDashboard')}</a>`;
+  else if (user) actions = '';
+  else actions = html`<a class="btn btn-primary btn-lg" href="/register?role=technician">${t('technicians.cta')}</a> <a class="btn btn-secondary btn-lg" href="/login">${t('technicians.login')}</a>`;
+  const body = html`
+    <section class="hero hero-single">
+      <div class="hero-copy">
+        <p class="eyebrow">${t('technicians.eyebrow')}</p>
+        <h1>${t('technicians.title')}</h1>
+        <p class="lead">${t('technicians.lead', { app })}</p>
+        ${actions ? html`<div class="hero-actions">${actions}</div>` : ''}
       </div>
-      <div class="card">
-        <h2>${t('home.forTechnicians.title')}</h2>
-        <p>${t('home.forTechnicians.text')}</p>
-        <a class="btn btn-secondary" href="${user?.role === 'technician' ? '/tech' : '/register?role=technician'}">${user?.role === 'technician' ? t('home.forTechnicians.ctaLoggedIn') : t('home.forTechnicians.cta')}</a>
-      </div>
-    </section>`;
-  return page(ctx, { title: '', body, activeNav: 'home' });
+    </section>
+    ${benefitsSection(ctx, t('technicians.whyTitle', { app }), t('technicians.benefits'), TECH_BENEFIT_ICONS)}
+    ${stepsSection(ctx, 'how-it-works', t('technicians.howTitle'), t('technicians.steps'))}
+    ${actions ? ctaBand(ctx, { title: t('technicians.ctaTitle'), text: t('technicians.ctaText'), primary: actions }) : ''}`;
+  return page(ctx, { title: t('technicians.eyebrow'), description: t('technicians.metaDescription'), body, activeNav: 'technicians', wide: true });
 }
 
 export function loginPage(ctx, { values = {}, error = '', next = '' } = {}) {

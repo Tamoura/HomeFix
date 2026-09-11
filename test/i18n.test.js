@@ -44,7 +44,7 @@ test('every English key has an Arabic translation and vice versa', () => {
 });
 
 test('every translation key referenced in the source exists', () => {
-  const sections = 'common|nav|roles|status|statusNote|steps|categories|urgency|offerStatus|userStatus|userBadge|fields|visit|home|auth|errors|flash|customer|admin|tech|events';
+  const sections = 'common|nav|roles|status|statusNote|steps|categories|urgency|offerStatus|userStatus|userBadge|fields|visit|home|services|technicians|auth|errors|flash|customer|admin|tech|events';
   const pattern = new RegExp(`'((?:${sections})\\.[\\w.]+)'`, 'g');
   const missing = new Set();
   for (const file of sourceFiles('src')) {
@@ -58,7 +58,7 @@ test('every translation key referenced in the source exists', () => {
   const dynamic = [
     ...STATUS_ORDER.flatMap((s) => [`status.${s}`, `statusNote.customer.${s}`, `statusNote.admin.${s}`]),
     ...STEPS.map((s) => `steps.${s}`),
-    ...CATEGORIES.map((c) => `categories.${c}`),
+    ...CATEGORIES.flatMap((c) => [`categories.${c}`, `services.${c}`]),
     ...URGENCY_LEVELS.flatMap((u) => [`urgency.${u}.label`, `urgency.${u}.hint`]),
     ...['pending', 'accepted', 'rejected', 'withdrawn'].map((s) => `offerStatus.${s}`),
     ...['customer', 'technician', 'admin'].map((r) => `roles.${r}`),
@@ -127,7 +127,8 @@ test('the site can be switched to Arabic and remembers the choice', async () => 
   res = await client.get('/');
   assert.equal(res.status, 200);
   assert.match(res.text, /<html lang="ar" dir="rtl"/);
-  assert.match(res.text, /إصلاحات المنزل، من البداية إلى النهاية\./);
+  assert.match(res.text, /كل إصلاح في منزلك، بأيدٍ تثق بها\./);
+  assert.match(res.text, /أسئلة يطرحها أصحاب المنازل/);
   assert.match(res.text, /تسجيل الدخول/);
   assert.match(res.text, /href="\/\?lang=en"[^>]*>English</, 'switch link points back to English');
   assert.match(res.headers.get('content-language'), /ar/);

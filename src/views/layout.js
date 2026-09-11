@@ -17,6 +17,8 @@ function navigation(ctx, activeNav) {
   if (!user) {
     return html`
       ${navLink('/#how-it-works', t('nav.howItWorks'), false)}
+      ${navLink('/#services', t('nav.services'), false)}
+      ${navLink('/technicians', t('nav.forTechnicians'), activeNav === 'technicians')}
       ${navLink('/login', t('nav.login'), activeNav === 'login')}
       <a href="/register" class="btn btn-primary btn-sm">${t('nav.getStarted')}</a>
       ${languageLinks(ctx)}`;
@@ -41,7 +43,7 @@ function navigation(ctx, activeNav) {
     ${languageLinks(ctx)}`;
 }
 
-export function page(ctx, { title, body, activeNav = '', wide = false }) {
+export function page(ctx, { title, description = '', body, activeNav = '', wide = false }) {
   const appName = ctx.config.appName;
   const flash = ctx.takeFlash();
   return html`<!doctype html>
@@ -50,6 +52,7 @@ export function page(ctx, { title, body, activeNav = '', wide = false }) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${title ? `${title} · ${appName}` : appName}</title>
+${description ? html`<meta name="description" content="${description}">` : ''}
 <link rel="icon" href="/public/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/public/styles.css">
 </head>

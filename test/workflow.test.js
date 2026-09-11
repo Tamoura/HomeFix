@@ -222,6 +222,13 @@ test('full lifecycle: request → inspection visit → offers → work → confi
   assert.match(res.text, /Kitchen sink leaking under the cabinet/);
   res = await admin.get('/admin?status=submitted');
   assert.match(res.text, /No requests found/);
+
+  // The landing page now has a track record to show.
+  res = await new Client(app.base).get('/');
+  assert.match(res.text, /stats-strip/);
+  assert.match(res.text, /<strong>1<\/strong><span>Jobs completed</);
+  assert.match(res.text, /<strong>2<\/strong><span>Vetted technicians</);
+  assert.match(res.text, /★ 5\.0/);
 });
 
 test('customers can cancel early, admins can cancel later, and offers get declined', async () => {
