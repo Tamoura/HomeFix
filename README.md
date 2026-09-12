@@ -39,7 +39,7 @@ The first start prints the admin credentials it created (defaults below). Change
 
 ## Deploy to Vercel (share the prototype)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FTamoura%2FTest&project-name=homefix&repository-name=homefix)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FTamoura%2FHomeFix&project-name=homefix&repository-name=homefix)
 
 Click the button (or run `npx vercel` in the project folder, then `npx vercel --prod`). No build step and no configuration are needed:
 
