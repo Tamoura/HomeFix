@@ -179,14 +179,18 @@ test('admin can create technician accounts directly', async () => {
 
 test('static files are served and path traversal is blocked', async () => {
   const client = new Client(app.base);
-  let res = await client.get('/public/styles.css');
+  let res = await client.get('/styles.css');
   assert.equal(res.status, 200);
   assert.match(res.headers.get('content-type'), /text\/css/);
-  res = await rawRequest(app.base, '/public/../package.json');
+  res = await client.get('/app.js');
+  assert.equal(res.status, 200);
+  res = await rawRequest(app.base, '/../package.json');
   assert.equal(res.status, 404);
-  res = await rawRequest(app.base, '/public/%2e%2e/package.json');
+  res = await rawRequest(app.base, '/%2e%2e%2fpackage.json');
   assert.equal(res.status, 404);
-  res = await client.get('/public/missing.css');
+  res = await rawRequest(app.base, '/src/app.js');
+  assert.equal(res.status, 404, 'only files under public/ are served');
+  res = await client.get('/missing.css');
   assert.equal(res.status, 404);
   res = await client.get('/definitely-not-here');
   assert.equal(res.status, 404);
@@ -222,4 +226,28 @@ test('landing pages render for visitors and logged-in users', async () => {
   res = await customer.get('/');
   assert.match(res.text, /href="\/requests\/new"[^>]*>Submit a new request</);
   assert.doesNotMatch(res.text, /Are you a technician\?/);
+});
+
+test('demo mode seeds data, shows demo accounts on the login page and accepts pre-parsed bodies', async () => {
+  const demo = await startApp({ demoMode: true });
+  try {
+    const client = new Client(demo.base);
+    let res = await client.get('/login');
+    assert.match(res.text, /Prototype environment/);
+    assert.match(res.text, /Try the prototype/);
+    assert.match(res.text, /data-fill-login="nadia@example.com"/);
+    assert.match(res.text, /data-fill-login="admin@homefix.test"/);
+    res = await client.get('/');
+    assert.match(res.text, /stats-strip/, 'seeded data shows on the landing page');
+    res = await client.login('nadia@example.com', 'customer123');
+    assert.equal(res.location, '/requests');
+
+    // A host runtime may hand the handler an already-parsed body (Vercel does).
+    const { readBody } = await import('../src/lib/http.js');
+    assert.deepEqual(await readBody({ headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: { email: 'a@b.c' } }), { email: 'a@b.c' });
+    assert.deepEqual(await readBody({ headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: 'email=a%40b.c&x=1' }), { email: 'a@b.c', x: '1' });
+    assert.deepEqual(await readBody({ headers: { 'content-type': 'application/json' }, body: Buffer.from('{"a":1}') }), { a: 1 });
+  } finally {
+    await demo.close();
+  }
 });

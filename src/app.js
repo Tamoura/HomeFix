@@ -11,16 +11,21 @@ import { registerCustomerRoutes } from './routes/customer.js';
 import { registerAdminRoutes } from './routes/admin.js';
 import { registerTechRoutes } from './routes/tech.js';
 
-const PUBLIC_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'public');
+const PUBLIC_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'public');
+const STATIC_PATH = /\.[A-Za-z0-9]+$/;
 
 export function loadConfig(env = process.env) {
+  // On Vercel the filesystem is read-only except /tmp, requests are always
+  // HTTPS, and demo data is seeded unless SEED_DEMO=0.
+  const onVercel = Boolean(env.VERCEL);
   return {
     appName: env.APP_NAME || 'HomeFix',
     currency: env.CURRENCY || 'USD',
     port: Number(env.PORT) || 3000,
     host: env.HOST || '0.0.0.0',
-    databaseFile: env.DATABASE_FILE || 'data/homefix.db',
-    secureCookies: env.COOKIE_SECURE === '1',
+    databaseFile: env.DATABASE_FILE || (onVercel ? '/tmp/homefix.db' : 'data/homefix.db'),
+    secureCookies: env.COOKIE_SECURE === '1' || (onVercel && env.COOKIE_SECURE !== '0'),
+    demoMode: env.SEED_DEMO !== undefined ? env.SEED_DEMO === '1' : onVercel,
     adminEmail: env.ADMIN_EMAIL || 'admin@homefix.test',
     adminPassword: env.ADMIN_PASSWORD || 'admin123',
     adminName: env.ADMIN_NAME || 'Site Admin',
@@ -75,9 +80,14 @@ export function createApp({ db, config, log = console }) {
       });
     }
     try {
-      if (ctx.path.startsWith('/public/')) {
-        await serveStatic(ctx, PUBLIC_DIR, '/public/');
-        return;
+      if (ctx.method === 'GET' && STATIC_PATH.test(ctx.path)) {
+        try {
+          await serveStatic(ctx, PUBLIC_DIR, '/');
+          return;
+        } catch (error) {
+          if (!(error instanceof HttpError && error.status === 404)) throw error;
+          // Not a static asset: fall through to the router.
+        }
       }
       if (ctx.method === 'POST') ctx.body = await readBody(req);
       await router.dispatch(ctx);

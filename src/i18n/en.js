@@ -241,6 +241,18 @@ export default {
     ctaText: 'Registration takes a minute. Your dashboard opens as soon as our team approves your account.',
   },
 
+  demo: {
+    banner: 'Prototype environment. Demo data may be reset at any time.',
+    title: 'Try the prototype',
+    intro: 'Use one of the demo accounts below to explore each role.',
+    use: 'Use',
+    customer: 'Customer',
+    technician: 'Technician',
+    admin: 'Admin',
+    password: 'Password',
+    adminHint: 'ask the site owner',
+  },
+
   auth: {
     loginTitle: 'Log in',
     loginIntro: 'Welcome back. Sign in to manage your maintenance requests.',

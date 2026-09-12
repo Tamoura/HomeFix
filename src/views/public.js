@@ -4,6 +4,7 @@ import { csrfField, errorSummary, field } from './components.js';
 import { BENEFIT_ICONS, TECH_BENEFIT_ICONS, categoryIcon } from './icons.js';
 import { CATEGORIES } from '../workflow.js';
 import { homePathFor } from '../auth.js';
+import { demoLogins } from '../demo.js';
 
 const DEMO_TONES = ['neutral', 'info', 'accent', 'warn', 'ok'];
 const DEMO_STATUSES = ['submitted', 'visit_scheduled', 'open_for_offers', 'in_progress', 'closed'];
@@ -141,8 +142,28 @@ export function loginPage(ctx, { values = {}, error = '', next = '' } = {}) {
         <button type="submit" class="btn btn-primary">${t('auth.loginButton')}</button>
       </form>
       <p class="muted">${t('auth.noAccount')} <a href="/register">${t('auth.createOne')}</a>.</p>
-    </section>`;
+    </section>
+    ${ctx.config.demoMode ? demoPanel(ctx) : ''}`;
   return page(ctx, { title: t('auth.loginTitle'), body, activeNav: 'login' });
+}
+
+function demoPanel(ctx) {
+  const t = ctx.t;
+  return html`<section class="card auth-card demo-card">
+    <h2>${t('demo.title')}</h2>
+    <p class="muted">${t('demo.intro')}</p>
+    <ul class="demo-list">
+      ${demoLogins(ctx.config).map(
+        (account) => html`<li>
+          <div>
+            <strong>${t(`demo.${account.role}`)}</strong>
+            <div class="small"><span class="ltr">${account.email}</span> · ${t('demo.password')}: ${account.password ? html`<code>${account.password}</code>` : t('demo.adminHint')}</div>
+          </div>
+          ${account.password ? html`<button type="button" class="btn btn-secondary btn-sm" data-fill-login="${account.email}" data-fill-password="${account.password}">${t('demo.use')}</button>` : ''}
+        </li>`,
+      )}
+    </ul>
+  </section>`;
 }
 
 export function registerPage(ctx, { values = {}, errors = {} } = {}) {

@@ -29,16 +29,10 @@ export class ValidationError extends Error {
 
 const MAX_BODY_BYTES = 1_000_000;
 
-export async function readBody(req) {
-  const type = String(req.headers['content-type'] || '').split(';')[0].trim().toLowerCase();
-  const chunks = [];
-  let size = 0;
-  for await (const chunk of req) {
-    size += chunk.length;
-    if (size > MAX_BODY_BYTES) throw new HttpError(413, 'errors.tooLarge');
-    chunks.push(chunk);
-  }
-  const text = Buffer.concat(chunks).toString('utf8');
+function parseBody(body, type) {
+  if (Buffer.isBuffer(body)) body = body.toString('utf8');
+  if (body && typeof body === 'object') return body; // already parsed by the host runtime
+  const text = String(body ?? '');
   if (type === 'application/x-www-form-urlencoded') {
     return Object.fromEntries(new URLSearchParams(text));
   }
@@ -50,6 +44,21 @@ export async function readBody(req) {
     }
   }
   return {};
+}
+
+export async function readBody(req) {
+  const type = String(req.headers['content-type'] || '').split(';')[0].trim().toLowerCase();
+  // Some hosts (Vercel's Node.js helpers, for example) consume the stream and
+  // expose the parsed body up front.
+  if (req.body !== undefined && req.body !== null) return parseBody(req.body, type);
+  const chunks = [];
+  let size = 0;
+  for await (const chunk of req) {
+    size += chunk.length;
+    if (size > MAX_BODY_BYTES) throw new HttpError(413, 'errors.tooLarge');
+    chunks.push(chunk);
+  }
+  return parseBody(Buffer.concat(chunks).toString('utf8'), type);
 }
 
 function encodeFlash(payload) {

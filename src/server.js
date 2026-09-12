@@ -1,9 +1,11 @@
 import { createServer, loadConfig } from './app.js';
 import { openDatabase } from './db.js';
 import { purgeExpiredSessions } from './auth.js';
+import { seedDemoData } from '../scripts/seed.js';
 
 const config = loadConfig();
 const db = openDatabase(config.databaseFile);
+if (config.demoMode && seedDemoData(db, config).seeded) console.log('Demo mode: seeded demo accounts and requests.');
 const server = createServer({ db, config });
 
 server.listen(config.port, config.host, () => {

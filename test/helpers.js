@@ -1,12 +1,14 @@
 import http from 'node:http';
 import { createServer, loadConfig } from '../src/app.js';
 import { openDatabase } from '../src/db.js';
+import { seedDemoData } from '../scripts/seed.js';
 
 const silentLog = { info() {}, warn() {}, error: (error) => console.error(error) };
 
-export async function startApp() {
-  const config = { ...loadConfig({}), logRequests: false, databaseFile: ':memory:' };
+export async function startApp(overrides = {}) {
+  const config = { ...loadConfig({}), logRequests: false, databaseFile: ':memory:', ...overrides };
   const db = openDatabase(':memory:');
+  if (config.demoMode) seedDemoData(db, config);
   const server = createServer({ db, config, log: silentLog });
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   const base = `http://127.0.0.1:${server.address().port}`;

@@ -52,6 +52,20 @@
     update();
   }
 
+  // Demo accounts: fill in the login form.
+  document.querySelectorAll('[data-fill-login]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var email = document.getElementById('field-email');
+      var password = document.getElementById('field-password');
+      if (!email || !password) return;
+      email.value = button.getAttribute('data-fill-login');
+      password.value = button.getAttribute('data-fill-password');
+      var form = email.closest('form');
+      if (form && form.requestSubmit) form.requestSubmit();
+      else if (form) form.submit();
+    });
+  });
+
   // Let success messages fade away on their own.
   var flash = document.querySelector('[data-flash].flash-success');
   if (flash) {

@@ -53,8 +53,8 @@ export function page(ctx, { title, description = '', body, activeNav = '', wide 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${title ? `${title} · ${appName}` : appName}</title>
 ${description ? html`<meta name="description" content="${description}">` : ''}
-<link rel="icon" href="/public/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/public/styles.css">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 <a class="skip-link" href="#main">${ctx.t('common.skipToContent')}</a>
@@ -70,6 +70,7 @@ ${description ? html`<meta name="description" content="${description}">` : ''}
     <nav class="nav" id="site-nav" aria-label="${ctx.t('common.mainNavigation')}">${navigation(ctx, activeNav)}</nav>
   </div>
 </header>
+${ctx.config.demoMode ? html`<div class="demo-banner" role="note">${ctx.t('demo.banner')}</div>` : ''}
 <main id="main" class="container${wide ? ' container-wide' : ''}">
   ${flash ? html`<div class="flash flash-${flash.type}" role="status" data-flash>${flash.message}</div>` : ''}
   ${body}
@@ -80,7 +81,7 @@ ${description ? html`<meta name="description" content="${description}">` : ''}
     <span>${ctx.t('common.appTagline')}</span>
   </div>
 </footer>
-<script src="/public/app.js" defer></script>
+<script src="/app.js" defer></script>
 </body>
 </html>`;
 }

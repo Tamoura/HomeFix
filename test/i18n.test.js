@@ -44,7 +44,7 @@ test('every English key has an Arabic translation and vice versa', () => {
 });
 
 test('every translation key referenced in the source exists', () => {
-  const sections = 'common|nav|roles|status|statusNote|steps|categories|urgency|offerStatus|userStatus|userBadge|fields|visit|home|services|technicians|auth|errors|flash|customer|admin|tech|events';
+  const sections = 'common|nav|roles|status|statusNote|steps|categories|urgency|offerStatus|userStatus|userBadge|fields|visit|home|services|technicians|demo|auth|errors|flash|customer|admin|tech|events';
   const pattern = new RegExp(`'((?:${sections})\\.[\\w.]+)'`, 'g');
   const missing = new Set();
   for (const file of sourceFiles('src')) {
